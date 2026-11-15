@@ -1,0 +1,11 @@
+output/
+.qa/
+*.tex
+*.pdf
+*.docx
+*.html
+*.aux
+*.out
+*.toc
+*.synctex.gz
+*.log

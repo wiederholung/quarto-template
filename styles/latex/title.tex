@@ -1,0 +1,25 @@
+$if(title)$
+\title{$title$}
+$endif$
+$if(subtitle)$
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{\apptocmd{\@title}{\par {\large #1\par}}{}{}}
+\makeatother
+\subtitle{$subtitle$}
+$endif$
+\author{%
+$for(by-author)$
+$it.name.literal$$if(it.orcid)$\nobreak\hspace{.145em}\href{https://orcid.org/$it.orcid$}{\includegraphics[height=.815em]{styles/latex/orcid.pdf}}\nobreak\hspace{.138em}$endif$\textsuperscript{$for(it.affiliations)$$it.number$$sep$,$endfor$$if(it.attributes.corresponding)$$if(it.affiliations)$,$endif$*$endif$}%
+$sep$\quad
+$endfor$
+$for(by-affiliation)$
+\\[.25em]{\small \textsuperscript{$it.number$}$it.name$}%
+$endfor$
+$for(by-author)$
+$if(it.attributes.corresponding)$
+$if(it.email)$\\[.2em]{\small * \href{mailto:$it.email$}{$it.email$}}$endif$
+$endif$
+$endfor$
+}
+\date{$date$}

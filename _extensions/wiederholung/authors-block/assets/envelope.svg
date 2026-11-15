@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 102 90">
+  <title>Corresponding author</title>
+  <!-- Original MIT-licensed artwork. Visible outline: 102 x 78 units;
+       six clear units above/below align its center with the ORCID. -->
+  <g fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="8" width="98" height="74" rx="5"/>
+    <path d="M4 11 L51 48 L98 11 M4 79 L34 49 M98 79 L68 49"/>
+  </g>
+</svg>

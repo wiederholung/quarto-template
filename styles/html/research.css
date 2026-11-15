@@ -1,0 +1,21 @@
+:root { --bs-body-color: #20252a; --bs-link-color: #265d80; }
+body { font-family: Georgia, "Times New Roman", "Noto Serif CJK SC", "SimSun", serif; font-size: 1.05rem; line-height: 1.7; }
+main.content { max-width: 800px; }
+h1, h2, h3, h4, .quarto-title, #TOC { font-family: "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; color: #15191d; }
+h1 { font-size: 1.85rem; }
+h2 { font-size: 1.45rem; border-bottom: 0; margin-top: 1.7em; }
+h3 { font-size: 1.15rem; }
+#title-block-header { margin-bottom: 2.3rem; }
+.quarto-title .subtitle { color: #59616a; font-size: 1.1rem; }
+figcaption, .table-caption { color: #424950; font-size: .93rem; line-height: 1.5; text-align: left; }
+table { font-size: .94rem; }
+table th { border-top: 1.3px solid #454b50; border-bottom: 1px solid #454b50; }
+table tbody tr:last-child td { border-bottom: 1.3px solid #454b50; }
+table td { border: 0; }
+blockquote { color: #555; font-size: 1rem; }
+pre, code { font-family: Consolas, "Noto Sans Mono", monospace; }
+pre { font-size: .88rem; }
+.table-note { font-size: .9rem; line-height: 1.45; margin-top: .4rem; }
+.callout { font-size: .96rem; }
+#refs { font-size: .93rem; line-height: 1.5; }
+@media print { #quarto-margin-sidebar { display: none; } }

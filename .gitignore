@@ -1,0 +1,14 @@
+/output/
+/.quarto/
+/.qa/
+*.tex
+*.log
+*.aux
+*.out
+*.toc
+*.synctex.gz
+!styles/latex/*.tex
+
+**/*.quarto_ipynb
+
+/.luarc.json

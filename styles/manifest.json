@@ -1,0 +1,72 @@
+{
+  "snapshot_version": "0.1.0-dev",
+  "status": "local working-tree snapshot; unpublished",
+  "word": {
+    "repository": "https://github.com/wiederholung/pandoc_docx_template",
+    "base_commit": "8f94b9938b24bf7aa79e2a8190ef73fa97533f37",
+    "builder": "scripts/build_quarto_references.py",
+    "builder_sha256": "a5153a1fcf550658b3bde04e76496dd0bae2cf9f8486bbda609db5dc9bec4903",
+    "upstream_source": {
+      "version": "0.1.0-dev",
+      "source_commit": "8f94b9938b24bf7aa79e2a8190ef73fa97533f37",
+      "source_file": "templates\\template_标题不编号-列表第二行缩进.docx",
+      "source_sha256": "fb383853fa7eff6db09a95ccee6dc71f91aa2c810b26911aba2a6804b123e570",
+      "outputs": [
+        {
+          "file": "templates\\quarto\\reference-zh.docx",
+          "sha256": "4b2d0c614ac47dd86dbdf2362aea0a6a227d8f8c8da81c69a6275dd0d6b3dc45"
+        },
+        {
+          "file": "templates\\quarto\\reference-en.docx",
+          "sha256": "6249ccc8b3dedd53c66bf98ec95a07b7ee997b8d32cd68f6440fa33d24d0666c"
+        }
+      ]
+    }
+  },
+  "authors_block": {
+    "repository": "https://github.com/wiederholung/authors-block",
+    "base_commit": "9c0e6e3bf88eeff3bedd11156dfe7bb8496954f3",
+    "version": "0.3.0-dev"
+  },
+  "csl": {
+    "repository": "https://github.com/citation-style-language/styles",
+    "commit": "1ccf4696be22ea0b55f83cc9163bde3061fddb0a",
+    "path": "ieee.csl"
+  },
+  "verified_environment": {
+    "quarto": "1.11.9",
+    "pandoc": "3.10",
+    "pdf_engine": "XeLaTeX / MiKTeX",
+    "word_fonts": [
+      "Times New Roman",
+      "SimSun",
+      "SimHei",
+      "Consolas"
+    ]
+  },
+  "sha256": {
+    "_extensions/wiederholung/authors-block/_extension.yml": "1adebe54020dfab403c6bc64983dd332c8f650217999a0181aad8c269636a0e0",
+    "_extensions/wiederholung/authors-block/assets/envelope.png": "30b412071390c08ee3f7b5001da14a5a07e59443a374a04e7221e38a94ec810c",
+    "_extensions/wiederholung/authors-block/assets/envelope.svg": "92fb3ac9bc5f9c2b0764b2700a77adb2cd7e6edb75487e9f777e652644658563",
+    "_extensions/wiederholung/authors-block/assets/orcid.pdf": "95500cf451fb432d3f5a0762f404ec79ef787928fea86a4870ba6941b728b6c0",
+    "_extensions/wiederholung/authors-block/assets/orcid.png": "3650e0422b03aba686a50ad9d18b01833964d666d6a757a53bf4095b8d067816",
+    "_extensions/wiederholung/authors-block/assets/orcid.svg": "26483c4d9c32c10f7d5a7dc895ede560696336d336dac582dc3c6a8b94500919",
+    "_extensions/wiederholung/authors-block/assets/README.md": "88b0b6867434034141f107e2e1559ea64d947fe7a2055fab03eb467dfd517afb",
+    "_extensions/wiederholung/authors-block/authors-block.lua": "6779a631a2d1f1e3ff5240fa3fb36fdccd872d4d46bb62f43d87771ab81c141e",
+    "_extensions/wiederholung/authors-block/docx_author_block.lua": "f86ba92c055079f82be2eaffc5632f56d4bda0985eaf47de14a01cf4b7d45fbc",
+    "_extensions/wiederholung/authors-block/from_author_info_blocks.lua": "0a3799b579cb140afa3eda21fd269b2f595789da9ba44128cfc9743bfdf4a29a",
+    "_extensions/wiederholung/authors-block/from_scholarly_metadata.lua": "3f19fc519487aadef4c42fec6e34b5d55d8215f5686a0ecc38421abc0009f186",
+    "_extensions/wiederholung/authors-block/LICENSE.md": "7b9bd57e616652c41977bb38fa76e83c353800858a80407a59d9ff5c9ad2c4cd",
+    "_extensions/wiederholung/authors-block/utils.lua": "ed498870ac195673a9edbc030ccaf80106694a3fd517c69c88bd754e387160ce",
+    "styles/csl/ieee.csl": "b4c7619fc16c45a31e4cc3271eab94ffe83192d3b4c7fc729470a3b459448de3",
+    "styles/docx/compat.lua": "f081238c24769b5b8645dd91e494dab8867c3928a0d633bf63e40d1d244708ee",
+    "styles/docx/reference-en.docx": "6249ccc8b3dedd53c66bf98ec95a07b7ee997b8d32cd68f6440fa33d24d0666c",
+    "styles/docx/reference-zh.docx": "4b2d0c614ac47dd86dbdf2362aea0a6a227d8f8c8da81c69a6275dd0d6b3dc45",
+    "styles/html/research.css": "854ead76ce579fba4b3600f8f7eabcfd1401549c05c5cf463de669601efe2e61",
+    "styles/latex/common.tex": "86960d8b18c47acd4b43158df0f01b06ce0e6496c3c28b6a478875fff00e40a5",
+    "styles/latex/orcid.pdf": "95500cf451fb432d3f5a0762f404ec79ef787928fea86a4870ba6941b728b6c0",
+    "styles/latex/title.tex": "4716d754ee0ccdd593a0dd5be3d11631cc03441916e39f01e5ba05339d94efd6",
+    "styles/latex/zh.tex": "21caf3f3d5f8de37c4722758fe711a48af093cff4e17b49c15bd40881c524a3d",
+    "styles/README.md": "023261e424d4c01f2930bbe6ed1cf8c8f774a7f3199729554e9be3c6865b7def"
+  }
+}

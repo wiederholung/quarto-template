@@ -1,0 +1,6 @@
+# Preserve the exact bytes recorded by styles/manifest.json on every platform.
+styles/** -text
+_extensions/** -text
+*.docx binary
+*.png binary
+*.pdf binary

@@ -1,0 +1,193 @@
+---
+title: Quarto Research Document Template
+subtitle: English examples and writing conventions
+author:
+  # ORCID, multiple affiliations, equal contribution and correspondence.
+  - name: Josiah Carberry
+    orcid: 0000-0002-1825-0097
+    affiliations:
+      - ref: example
+      - ref: university
+    equal-contributor: true
+    corresponding: true
+    email: example@example.org
+  - name: Alex Example
+    # ORCID is optional; this author shares an affiliation and equal contribution.
+    equal-contributor: true
+    affiliations:
+      - ref: example
+  - name: Sam Lee
+    # An ordinary author with an affiliation only.
+    affiliations:
+      - ref: university
+  - name: Robin Example
+    affiliations:
+      - ref: university
+    corresponding: true
+    email: second@example.org
+affiliations:
+  - id: example
+    name: Example Research Institute, Centre for Artificial Intelligence and Robotics
+  - id: university
+    name: School of Computer Science and Technology, Example University
+date: 2026-11-15
+date-format: MMMM D, YYYY
+lang: en
+bibliography: bibliography/references.bib
+csl: styles/csl/ieee.csl
+number-sections: true
+toc: false
+abstract: |
+  This document is both a starting point and a set of copyable examples for research writing in Quarto. A single source produces HTML, Word and PDF, with examples of author metadata, citations, figures, tables, equations and references. All numerical results are synthetic layout examples. Replace the demonstration authors, affiliation and email before use; the ORCID belongs to the official example record.
+format:
+  html:
+    toc: true
+    toc-depth: 2
+  docx:
+    reference-doc: styles/docx/reference-en.docx
+  pdf:
+    documentclass: scrartcl
+    classoption: [DIV=11, parskip=half, abstract=true]
+---
+
+# Start writing {#sec-start}
+
+Copy this file and replace the title, authors, language, date and bibliography in its YAML header. The project configuration supplies shared styles; each document selects its citation style, contents list and section numbering. The Chinese counterpart, `template-zh.qmd`, covers the same features. Replace this explanatory body with your own text.
+
+The four example authors demonstrate single, multiple and shared affiliations, optional ORCID, equal contribution and two corresponding authors. Match each author's affiliation `ref` to an institution `id`. Set `equal-contributor: true` for equal contribution, and `corresponding: true` with `email` for correspondence. Word generates numbers, † and envelopes, and combines linked email addresses; do not type these marks into names. HTML and LaTeX PDF use their own author layouts.
+
+Run these commands from the project directory. All deliverables go into `output/`. Use the preview server for reliable HTML navigation and link behavior.
+
+```bash
+quarto render template-en.qmd --to docx
+quarto render template-en.qmd --to pdf
+quarto preview template-en.qmd --to html
+```
+
+Word uses a reference document stored in this repository. PDF is typeset directly by XeLaTeX using KOMA-Script's `scrartcl` class and its A4 type area. The first PDF build requires a TeX distribution and the relevant packages. The examples contain static code, so rendering does not require Python or R.
+
+## Headings and paragraphs {#sec-headings}
+
+Put the document title in YAML `title`; start body headings at `#`, with `##` for the next level and no heading-level shift. Do not type section numbers into headings. Separate paragraphs with one blank line, and let the styles control indentation, spacing and pagination.
+
+```markdown
+# Method {#sec-method}
+## Problem definition {#sec-problem}
+# References {.unnumbered}
+```
+
+Set `toc: true` in the document when a report needs a contents list. The `.unnumbered` class keeps the references heading unnumbered while other sections retain their numbering.
+
+# Citations and cross references {#sec-references}
+
+Literate programming connects explanations with implementation [@knuth1984]. A citation group uses one pair of brackets [@knuth1984; @shannon1948]. This group demonstrates syntax; it does not present these papers as comparable experiments. In English, retain ordinary word spacing around citations and cross references. In Chinese prose, do not insert spaces merely to separate a citation from adjacent characters.
+
+```markdown
+Literate programming connects explanation and code [@knuth1984].
+The workflow is shown in @fig-workflow.
+See @tbl-results and @eq-objective.
+```
+
+Use citation keys from the local BibTeX file and preserve verified bibliographic metadata. A reference manager should own the research bibliography. Avoid literal references such as “Figure 1” or “[1]” in prose: numbering changes as a document grows. Use stable semantic labels, such as `fig-workflow`, `tbl-results` and `eq-objective`.
+
+# Figures and tables {#sec-visuals}
+
+## Individual figures and panels
+
+@fig-workflow summarizes the document workflow. A caption should identify the objects and relationships needed to understand a figure. Alternative text provides a concise description for readers who use assistive technology.
+
+![One source produces three document formats. The source owns content, citations and labels, while shared styles and format settings control their presentation.](figures/workflow.png){#fig-workflow width=100% fig-alt="A source document passes through Quarto to produce HTML, Word and PDF."}
+
+```markdown
+![A self-contained caption](figures/workflow.png){#fig-workflow
+  width=100% fig-alt="A concise description of the image"}
+```
+
+Panels can be cited separately: @fig-accuracy illustrates a trend and @fig-latency compares two values. Use @fig-comparison to refer to the complete group. Arrange images in columns when side-by-side comparison serves the argument.
+
+::: {#fig-comparison layout-ncol=2}
+![Illustrative accuracy as sample size increases.](figures/accuracy.png){#fig-accuracy fig-alt="Two synthetic accuracy curves rise as sample size increases."}
+
+![Illustrative latency for two methods.](figures/latency.png){#fig-latency fig-alt="Synthetic latencies of 24 and 31 milliseconds for methods A and B."}
+
+Two views of synthetic data. The left panel demonstrates a trend; the right compares individual values. These are layout examples, not experimental findings.
+:::
+
+## Table captions and notes
+
+@tbl-results demonstrates left-aligned labels, right-aligned numeric columns and a separate explanatory note. Put units in the column headers. Keep qualifications in a table note when they do not belong in the caption or an individual cell.
+
+:::: {#tbl-results}
+| Method | Accuracy (%) | Latency (ms) |
+|:-------|-------------:|-------------:|
+| Method A | 86.2 | 24 |
+| Method B | 89.1 | 31 |
+| Reference setting | 82.7 | 20 |
+
+::: {.table-note custom-style="Table Note"}
+Note: All values are synthetic. Higher accuracy and lower latency are preferable.
+:::
+
+A numerical comparison of the demonstration methods.
+::::
+
+Use native Markdown tables or a table tool that supports the target formats. Avoid replacing an entire table with a screenshot. Long tables, merged cells and journal-specific layouts need their own review.
+
+# Mathematical notation {#sec-math}
+
+Write inline variables as $x_i$, vectors as $\mathbf{x}$ and sets as $\mathcal{D}$. Use upright units with mathematical spacing, such as $24\,\mathrm{ms}$. Give a numbered equation a semantic label:
+
+$$
+\mathcal{L}(\theta)=\frac{1}{N}\sum_{i=1}^{N}
+\left(f_\theta(\mathbf{x}_i)-y_i\right)^2
++\lambda\lVert\theta\rVert_2^2.
+$$ {#eq-objective}
+
+In @eq-objective, the first term measures prediction error and the second penalizes parameter magnitude. Here $N$ is the sample count and $\lambda$ is a nonnegative weight. The equation illustrates notation and symbol definitions.
+
+Break long equations according to their structure and the available text width. When moving from two columns to one, remove inherited line breaks that are no longer useful. An `aligned` environment is suitable for a sequence of related expressions:
+
+$$
+\begin{aligned}
+\widehat{y}_i &= f_\theta(\mathbf{x}_i), \\
+r_i &= \widehat{y}_i-y_i, \\
+\operatorname{MSE} &= \frac{1}{N}\sum_{i=1}^{N}r_i^2.
+\end{aligned}
+$$ {#eq-residuals}
+
+# Other useful elements {#sec-elements}
+
+Use lists for parallel items or ordered steps. Let the renderer generate the displayed list numbers:
+
+1. Define the research question and symbols.
+1. Present the method, evidence and limitations.
+1. Check consistency between claims, citations and results.
+
+> A block quotation separates a short passage from the surrounding text. This sentence was written for the template; it is not a quotation from an external source.
+
+Use footnotes for brief supporting details.[^example-note] A link can point to the [Quarto documentation](https://quarto.org/docs/guide/). Inline code looks like `quarto render`. A fenced code block can show an example without executing it:
+
+[^example-note]: A footnote should not contain information essential to understanding the main argument.
+
+```python
+def mean(values):
+    """A static example; this block is not executed."""
+    return sum(values) / len(values)
+```
+
+::: {.callout-note appearance="simple"}
+## Usage note
+
+Use callouts sparingly in a research manuscript. This example demonstrates their behavior across output formats.
+:::
+
+# Maintenance and reproducibility {#sec-maintenance}
+
+The Word templates, CSL style and author extension are stored with the project. Before an update, commit the current project, explicitly replace a style or install a chosen extension version, and inspect all three formats in both languages. Sources and file checksums are recorded in `styles/manifest.json`. A new project retains its copied files when the remote template changes.
+
+Local snapshots make style inputs traceable. Pagination also depends on Quarto, Pandoc, TeX, fonts and Word versions. Archive the source, tool versions and final PDF for a completed document. Stronger reproduction requires those tools and fonts to be pinned as well.
+
+# References {.unnumbered}
+
+::: {#refs}
+:::

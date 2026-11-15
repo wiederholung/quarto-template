@@ -1,0 +1,15 @@
+% Shared mechanics only. ctexart and scrartcl own their page and heading design.
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{needspace}
+\usepackage{etoolbox}
+\captionsetup{font=small,labelfont=bf,justification=raggedright,singlelinecheck=false}
+% Leave room for a table caption, heading and several rows before starting.
+\BeforeBeginEnvironment{longtable}{\Needspace{12\baselineskip}}
+\AtBeginEnvironment{longtable}{\small}
+\setlength{\emergencystretch}{2em}
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\AtBeginDocument{\urlstyle{same}}
