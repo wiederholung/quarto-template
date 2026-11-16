@@ -3,6 +3,13 @@
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $files = @{
+    '.gitattributes' = @'
+styles/** -text whitespace=cr-at-eol
+_extensions/** -text whitespace=cr-at-eol
+*.docx binary
+*.png binary
+*.pdf binary
+'@
     '.gitignore' = @'
 /output/
 /.quarto/

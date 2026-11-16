@@ -115,7 +115,31 @@ for lang in ('zh','en'):
             if text==reference: heading.append(p)
             if ps is not None and ps.get(f'{{{W}}}val')=='PanelFigure': panels.append(p)
         require(len(heading)==1,f'{lang} DOCX reference heading missing/duplicated')
-        require(heading[0].find('w:pPr/w:numPr',NS) is None,f'{lang} DOCX references heading numbered')
+        ref_num=heading[0].find('w:pPr/w:numPr/w:numId',NS)
+        require(ref_num is None or ref_num.get(f'{{{W}}}val')=='0',
+                f'{lang} DOCX references must remain unnumbered')
+        numbering=ET.fromstring(z.read('word/numbering.xml'))
+        require(numbering.find('.//w:name[@w:val="QuartoNativeHeadings"]',NS) is None,
+                f'{lang} DOCX native heading numbering should be disabled')
+        fields=[e.text or '' for e in doc.findall('.//w:instrText',NS)]
+        require(not any(' REF "sec-' in f for f in fields),
+                f'{lang} DOCX native section fields should be disabled')
+        for target in ['sec-headings','sec-math']:
+            require(doc.find(f'.//w:hyperlink[@w:anchor="{target}"]',NS) is not None,
+                    f'{lang} DOCX Quarto section link missing: {target}')
+        abstract=[p for p in doc.findall('.//w:p',NS)
+                  if p.find('w:pPr/w:pStyle[@w:val="Abstract"]',NS) is not None]
+        require(len(abstract)==1 and ''.join(abstract[0].itertext()).startswith('摘要：' if lang=='zh' else 'Abstract—'),
+                f'{lang} DOCX abstract label must run into its first paragraph')
+        for table in doc.findall('.//w:tbl',NS):
+            if table.find('w:tblPr/w:tblBorders/w:left[@w:color="0758E5"]',NS) is None: continue
+            grid=table.findall('w:tblGrid/w:gridCol',NS)
+            require(len(grid)==2 and table.find('w:tblPr/w:tblLayout[@w:type="fixed"]',NS) is not None,
+                    f'{lang} DOCX callout grid must match its two cells')
+            require(table.find('.//w:pStyle[@w:val="CalloutBody"]',NS) is not None,
+                    f'{lang} DOCX callout must use dedicated paragraph styles')
+            require(all(len(p.findall('w:pPr',NS))==1 for p in table.findall('.//w:p',NS)),
+                    f'{lang} DOCX callout has conflicting duplicate paragraph properties')
         require(len(panels)==2 and all(p.find('.//w:drawing',NS) is not None and p.find('.//w:br',NS) is not None for p in panels),
                 f'{lang} DOCX panels must retain image and caption together')
         pair_rows=[row for row in doc.findall('.//w:tr',NS) if len(row.findall('w:tc',NS))==2 and
@@ -150,10 +174,20 @@ else:
                     descriptor=child.get('/FontDescriptor')
                     embedded=descriptor is not None and any(k in descriptor.get_object() for k in ('/FontFile','/FontFile2','/FontFile3'))
                     fonts[name]=embedded or child.get('/Subtype')=='/Type3'
-        require(ORCID in uris,f'{lang} PDF missing ORCID link')
-        # These examples have no figures on page 1; the ORCID must be vector-only.
-        require(not reader.pages[0].images,f'{lang} PDF title page has a raster ORCID icon')
+        # Class-owned title with the authors-block LaTeX backend.
+        names=['Josiah Carberry','示例作者','Catherine Alexandra Montgomery','陈明'] if lang=='zh' else [
+            'Josiah Carberry','Alex Example','Sam Lee','Robin Example']
+        first_page=''.join(reader.pages[0].extract_text().split())
+        for name in names:
+            require(''.join(name.split()) in first_page,f'{lang} PDF author missing: {name}')
+        require(any('orcid.org/0000-0002-1825-0097' in uri for uri in uris),f'{lang} PDF ORCID link missing')
+        require('mailto:example@example.org' in uris and 'mailto:second@example.org' in uris,f'{lang} PDF correspondence missing')
+        for annotation in reader.pages[0].get('/Annots',[]):
+            action=annotation.get_object().get('/A',{})
+            if action.get('/S')=='/GoTo':
+                require(str(action['/D']) in reader.named_destinations,f'{lang} PDF author target missing')
+        require(any('10.1093/comjnl/27.2.97' in uri for uri in uris),f'{lang} PDF bibliography DOI link missing')
         require(fonts and all(fonts.values()),f'{lang} PDF has unembedded fonts: {fonts}')
-        checks.append(f'{lang} PDF: {len(reader.pages)} A4 pages; text, references, vector ORCID and {len(fonts)} embedded fonts passed')
+        checks.append(f'{lang} PDF: {len(reader.pages)} A4 pages; native author names, text, references and {len(fonts)} embedded fonts passed')
 
 print('\n'.join(checks))

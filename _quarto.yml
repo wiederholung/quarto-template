@@ -3,11 +3,10 @@ project:
   output-dir: output
 
 link-citations: true
-link-external-newwindow: true
 format:
   html:
     theme: cosmo
-    css: styles/html/research.css
+    link-external-newwindow: true
     code-copy: true
     embed-resources: true
     html-math-method: mathjax
@@ -20,23 +19,11 @@ format:
       - quarto
       - styles/docx/compat.lua
   pdf:
+    filters:
+      - quarto
+      - authors-block
     pdf-engine: xelatex
     papersize: a4
-    pagestyle: plain
-    fontsize: 11pt
-    fig-pos: H
-    colorlinks: true
-    linkcolor: black
-    citecolor: black
-    urlcolor: MidnightBlue
-    mainfont: TeX Gyre Termes
-    sansfont: TeX Gyre Heros
-    monofont: Consolas
-    cite-method: citeproc
-    template-partials:
-      - styles/latex/title.tex
-    include-in-header:
-      - styles/latex/common.tex
-    keep-tex: false
-
-editor: source
+    # Let the document class control paragraph indentation and spacing.
+    indent: true
+    colorlinks: false

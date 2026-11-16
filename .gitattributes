@@ -1,6 +1,6 @@
 # Preserve the exact bytes recorded by styles/manifest.json on every platform.
-styles/** -text
-_extensions/** -text
+styles/** -text whitespace=cr-at-eol
+_extensions/** -text whitespace=cr-at-eol
 *.docx binary
 *.png binary
 *.pdf binary

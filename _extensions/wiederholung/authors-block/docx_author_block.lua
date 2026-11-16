@@ -64,19 +64,7 @@ local function flag(author, key)
   return value ~= nil and value ~= false and stringify(value) ~= "false"
 end
 
-local function normalize_orcid(value)
-  if not value then return nil end
-  local id = stringify(value):gsub("^https?://orcid%.org/", ""):gsub("/$", ""):upper()
-  assert(id:match("^%d%d%d%d%-%d%d%d%d%-%d%d%d%d%-%d%d%d[%dX]$"),
-    "authors-block: invalid ORCID syntax: " .. id)
-  local digits=id:gsub("%-", "")
-  local total=0
-  for n=1,15 do total=(total+tonumber(digits:sub(n,n)))*2 end
-  local check=(12-total%11)%11
-  assert(digits:sub(16,16) == (check==10 and "X" or tostring(check)),
-    "authors-block: invalid ORCID check digit: " .. id)
-  return id
-end
+local normalize_orcid = require('orcid').normalize
 
 local function gap(size, em)
   -- U+00A0 must directly touch the inline drawing to keep it with the name.
@@ -233,7 +221,7 @@ function M.render(doc)
   end
   if equal then
     local line=pandoc.Inlines({marker("†",note_size),gap(note_size,layout.note_gap)})
-    line:extend(inlines(zh and "这些作者作出了同等贡献。" or "These authors contributed equally."))
+    line:extend(inlines(zh and "同等贡献" or "Equal contribution"))
     details:insert(styled(line,#emails==0 and "Author Note Last" or "Author Note",equal_target))
   end
   if #emails>0 then

@@ -36,6 +36,9 @@ local create_authors_inlines = from_authors.create_authors_inlines
 
 -- This is the main-part
 function Pandoc(doc)
+  if FORMAT == "latex" then
+    return require("latex_author_block").render(doc)
+  end
   -- Keep the legacy non-DOCX renderer intact for existing users.
   if FORMAT == "docx" then
     return require("docx_author_block").render(doc)

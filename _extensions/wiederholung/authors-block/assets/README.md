@@ -29,3 +29,5 @@ without superscripting the Word image. `envelope.png` is its 204 x 180 fallback:
 ```sh
 rsvg-convert -w 204 -h 180 -o envelope.png envelope.svg
 ```
+
+`envelope.pdf` is the same SVG converted with `rsvg-convert -f pdf` for the LaTeX backend.

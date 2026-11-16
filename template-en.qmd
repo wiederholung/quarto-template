@@ -47,14 +47,14 @@ format:
     reference-doc: styles/docx/reference-en.docx
   pdf:
     documentclass: scrartcl
-    classoption: [DIV=11, parskip=half, abstract=true]
+    classoption: [abstract=true]
 ---
 
 # Start writing {#sec-start}
 
 Copy this file and replace the title, authors, language, date and bibliography in its YAML header. The project configuration supplies shared styles; each document selects its citation style, contents list and section numbering. The Chinese counterpart, `template-zh.qmd`, covers the same features. Replace this explanatory body with your own text.
 
-The four example authors demonstrate single, multiple and shared affiliations, optional ORCID, equal contribution and two corresponding authors. Match each author's affiliation `ref` to an institution `id`. Set `equal-contributor: true` for equal contribution, and `corresponding: true` with `email` for correspondence. Word generates numbers, † and envelopes, and combines linked email addresses; do not type these marks into names. HTML and LaTeX PDF use their own author layouts.
+The four authors in the metadata demonstrate single, multiple and shared affiliations, optional ORCID, equal contribution and two corresponding authors. Match each author's affiliation `ref` to an institution `id`. Set `equal-contributor: true` for equal contribution, and `corresponding: true` with `email` for correspondence. Word generates numbers, † and envelopes and combines email addresses. HTML uses its native author block. PDF also displays affiliations, ORCID, equal contribution and correspondence, while inheriting the document class author font and date layout.
 
 Run these commands from the project directory. All deliverables go into `output/`. Use the preview server for reliable HTML navigation and link behavior.
 
@@ -64,7 +64,7 @@ quarto render template-en.qmd --to pdf
 quarto preview template-en.qmd --to html
 ```
 
-Word uses a reference document stored in this repository. PDF is typeset directly by XeLaTeX using KOMA-Script's `scrartcl` class and its A4 type area. The first PDF build requires a TeX distribution and the relevant packages. The examples contain static code, so rendering does not require Python or R.
+Word uses a reference document stored in this repository. PDF uses Quarto's built-in LaTeX template with XeLaTeX and KOMA-Script's `scrartcl` class. The baseline retains the class's fonts, headings and paragraph rules, with Quarto's standard A4 type area. The first PDF build requires a TeX distribution and the relevant packages. The examples contain static code, so rendering does not require Python or R.
 
 ## Headings and paragraphs {#sec-headings}
 
@@ -80,12 +80,15 @@ Set `toc: true` in the document when a report needs a contents list. The `.unnum
 
 # Citations and cross references {#sec-references}
 
+Sections can also be referenced: see @sec-headings for heading syntax and @sec-math for equations. Quarto generates section, figure, table and equation numbers and references. Edit the source and render again to update them; pressing F9 in Word does not recalculate section numbers.
+
 Literate programming connects explanations with implementation [@knuth1984]. A citation group uses one pair of brackets [@knuth1984; @shannon1948]. This group demonstrates syntax; it does not present these papers as comparable experiments. In English, retain ordinary word spacing around citations and cross references. In Chinese prose, do not insert spaces merely to separate a citation from adjacent characters.
 
 ```markdown
 Literate programming connects explanation and code [@knuth1984].
 The workflow is shown in @fig-workflow.
 See @tbl-results and @eq-objective.
+See @sec-headings and @sec-math.
 ```
 
 Use citation keys from the local BibTeX file and preserve verified bibliographic metadata. A reference manager should own the research bibliography. Avoid literal references such as “Figure 1” or “[1]” in prose: numbering changes as a document grows. Use stable semantic labels, such as `fig-workflow`, `tbl-results` and `eq-objective`.

@@ -5,6 +5,59 @@ local function styled(block,name)
   return pandoc.Div({block},pandoc.Attr("",{}, {["custom-style"]=name}))
 end
 
+-- Keep Quarto's section index for cross-references, but let Word display and
+-- maintain the heading numbers. The post-render step binds native numbering.
+-- Retained as an opt-in experiment; normal renders use Quarto numbering.
+local native_numbering=os.getenv("QUARTO_DOCX_NATIVE_NUMBERING")=="1"
+function Header(h)
+  if FORMAT~="docx" or not native_numbering then return nil end
+  local number=h.attributes.number
+  if h.classes:includes("unnumbered") then number=nil end
+  if number then
+    assert(h.content[1] and h.content[1].t=="Str" and h.content[1].text==number,
+      "Unexpected Quarto heading number: "..pandoc.utils.stringify(h.content))
+    h.content:remove(1)
+    if h.content[1] and (h.content[1].t=="Space" or
+      (h.content[1].t=="Str" and h.content[1].text==". ")) then h.content:remove(1) end
+  end
+  h.content:insert(1,pandoc.RawInline("openxml",string.format(
+    "<!--qt-heading:%d:%s-->",h.level,number or "")))
+  return h
+end
+
+function Link(link)
+  if native_numbering and FORMAT=="docx" and link.target:match("^#sec%-") and link.classes:includes("quarto-xref") then
+    link.content:insert(1,pandoc.RawInline("openxml","<!--qt-section-link-->"))
+    return link
+  end
+end
+
+function Pandoc(doc)
+  if FORMAT~="docx" then return nil end
+  local blocks=pandoc.Blocks({})
+  local zh=pandoc.utils.stringify(doc.meta.lang or "en"):match("^zh")
+  local function abstract(b)
+    return b and b.t=="Div" and b.attributes["custom-style"]=="Abstract"
+  end
+  local i=1
+  while i<=#doc.blocks do
+    local label,body=doc.blocks[i],doc.blocks[i+1]
+    if abstract(label) and abstract(body) and #label.content==1
+      and label.content[1].t=="Para" and body.content[1] and body.content[1].t=="Para" then
+      local inlines=pandoc.Inlines({pandoc.Strong(label.content[1].content),
+        pandoc.Str(zh and "：" or "—")})
+      inlines:extend(body.content[1].content)
+      body.content[1].content=inlines
+      blocks:insert(body); i=i+2
+    else blocks:insert(label); i=i+1 end
+  end
+  doc.blocks=blocks
+  if native_numbering then
+    doc.blocks:insert(1,pandoc.RawBlock("openxml","<!--qt-docx-finalize-->"))
+  end
+  return doc
+end
+
 local function caption(p,kind)
   local found=false
   local content=pandoc.Inlines({})
@@ -58,8 +111,94 @@ function Table(tbl)
   return tbl
 end
 
+-- Read the reference document's text width once, before Pandoc writes output.
+-- Without a reference, Pandoc's default is Letter with one-inch margins.
+local callout_width
+local function text_width()
+  if callout_width then return callout_width end
+  local width=9360
+  local ref=PANDOC_WRITER_OPTIONS.reference_doc
+  if ref then
+    local archive=pandoc.zip.Archive(pandoc.system.read_file(ref))
+    for _,entry in ipairs(archive.entries) do
+      if entry.path=="word/document.xml" then
+        local section
+        for s in entry:contents():gmatch("<w:sectPr[%s>].-</w:sectPr>") do section=s end
+        local page=section and section:match("<w:pgSz%s[^>]+>")
+        local margin=section and section:match("<w:pgMar%s[^>]+>")
+        local function value(tag,key,default)
+          return tonumber(tag and tag:match('w:'..key..'="([%d]+)"')) or default
+        end
+        width=value(page,"w",12240)-value(margin,"left",1440)-value(margin,"right",1440)
+        break
+      end
+    end
+  end
+  callout_width=width-120
+  return callout_width
+end
+
+local function callout(div)
+  if div.attributes["docx-compat"]=="true" then return div end
+  local columns=1
+  div:walk({RawBlock=function(b)
+    if b.format=="openxml" and b.text:match("</w:tc>%s*<w:tc>") then columns=2 end
+  end})
+  local width=text_width()
+  local widths=columns==2 and {420,width-420} or {width}
+  local column,title=0,true
+  local function raw(b)
+    if b.format~="openxml" then return nil end
+    local s=b.text
+    local shade=s:match("<w:shd%s[^>]+/>") or ""
+    if s:find("<w:tblPr>",1,true) then
+      local accent=assert(s:match("<w:left%s[^>]-w:color=[^>]+/>"),"Missing callout accent")
+      local pr='<w:tblPr><w:tblStyle w:val="FloatLayout"/>'..
+        string.format('<w:tblW w:w="%d" w:type="dxa"/><w:tblInd w:w="60" w:type="dxa"/>',width)..
+        '<w:tblBorders><w:top w:val="nil"/>'..accent..
+        '<w:bottom w:val="nil"/><w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/>'..
+        '</w:tblBorders><w:tblLayout w:type="fixed"/></w:tblPr>'
+      local grid='<w:tblGrid>'
+      for _,w in ipairs(widths) do grid=grid..string.format('<w:gridCol w:w="%d"/>',w) end
+      grid=grid..'</w:tblGrid>'
+      s=s:gsub('<w:tblGrid>.-</w:tblGrid>',''):gsub('<w:tblPr>.-</w:tblPr>',pr..grid)
+    end
+    s=s:gsub('<w:tcPr>.-</w:tcPr>','')
+    s=s:gsub('<w:tc>',function()
+      column=column%columns+1
+      return string.format('<w:tc><w:tcPr><w:tcW w:w="%d" w:type="dxa"/>',widths[column])..shade..
+        '<w:tcMar><w:top w:w="80" w:type="dxa"/><w:left w:w="100" w:type="dxa"/>'..
+        '<w:bottom w:w="80" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tcMar>'..
+        '<w:vAlign w:val="top"/></w:tcPr>'
+    end)
+    -- Keep the required final cell paragraph, using the same body style.
+    s=s:gsub('<w:p%s*/>','<w:p><w:pPr><w:pStyle w:val="CalloutBody"/></w:pPr></w:p>')
+    b.text=s; return b
+  end
+  local function paragraph(p)
+    p=p:walk({RawInline=function(i)
+      if i.format=="openxml" then
+        i.text=i.text:gsub('<w:pPr>.-</w:pPr>','')
+        return i.text~="" and i or pandoc.Inlines({})
+      end
+    end})
+    local image=false
+    p:walk({Image=function() image=true end})
+    local icon=image and pandoc.utils.stringify(p)==""
+    local style=icon and "Callout Icon" or (title and "Callout Title" or "Callout Body")
+    if not icon then title=false end
+    return styled(pandoc.Para(p.content),style),false
+  end
+  div=div:walk({traverse="topdown",RawBlock=raw,Para=paragraph,Plain=paragraph,
+    Table=function(t) return t,false end})
+  div.attributes["docx-compat"]="true"
+  return div
+end
+
 function Div(div)
-  if FORMAT~="docx" or not div.identifier:match("^fig%-") then return nil end
+  if FORMAT~="docx" then return nil end
+  if div.classes:includes("docx-callout") then return callout(div) end
+  if not div.identifier:match("^fig%-") then return nil end
   local panels={}
   div:walk({Div=function(d)
     if d.classes:includes("quarto-layout-cell-subref") and d.attributes["ref-parent"]==div.identifier then
