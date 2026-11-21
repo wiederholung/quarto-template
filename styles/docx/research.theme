@@ -1,0 +1,11 @@
+{
+  "text-color": "#24282C",
+  "background-color": "#F4F5F6",
+  "text-styles": {
+    "Keyword": {"text-color": "#233C50", "bold": true},
+    "ControlFlow": {"text-color": "#233C50", "bold": true},
+    "Comment": {"text-color": "#505960", "italic": true},
+    "Documentation": {"text-color": "#505960"},
+    "String": {"text-color": "#40564C"}
+  }
+}

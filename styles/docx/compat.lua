@@ -32,32 +32,6 @@ function Link(link)
   end
 end
 
-function Pandoc(doc)
-  if FORMAT~="docx" then return nil end
-  local blocks=pandoc.Blocks({})
-  local zh=pandoc.utils.stringify(doc.meta.lang or "en"):match("^zh")
-  local function abstract(b)
-    return b and b.t=="Div" and b.attributes["custom-style"]=="Abstract"
-  end
-  local i=1
-  while i<=#doc.blocks do
-    local label,body=doc.blocks[i],doc.blocks[i+1]
-    if abstract(label) and abstract(body) and #label.content==1
-      and label.content[1].t=="Para" and body.content[1] and body.content[1].t=="Para" then
-      local inlines=pandoc.Inlines({pandoc.Strong(label.content[1].content),
-        pandoc.Str(zh and "：" or "—")})
-      inlines:extend(body.content[1].content)
-      body.content[1].content=inlines
-      blocks:insert(body); i=i+2
-    else blocks:insert(label); i=i+1 end
-  end
-  doc.blocks=blocks
-  if native_numbering then
-    doc.blocks:insert(1,pandoc.RawBlock("openxml","<!--qt-docx-finalize-->"))
-  end
-  return doc
-end
-
 local function caption(p,kind)
   local found=false
   local content=pandoc.Inlines({})
@@ -113,9 +87,9 @@ end
 
 -- Read the reference document's text width once, before Pandoc writes output.
 -- Without a reference, Pandoc's default is Letter with one-inch margins.
-local callout_width
+local cached_width
 local function text_width()
-  if callout_width then return callout_width end
+  if cached_width then return cached_width end
   local width=9360
   local ref=PANDOC_WRITER_OPTIONS.reference_doc
   if ref then
@@ -134,8 +108,8 @@ local function text_width()
       end
     end
   end
-  callout_width=width-120
-  return callout_width
+  cached_width=width
+  return cached_width
 end
 
 local function callout(div)
@@ -144,7 +118,7 @@ local function callout(div)
   div:walk({RawBlock=function(b)
     if b.format=="openxml" and b.text:match("</w:tc>%s*<w:tc>") then columns=2 end
   end})
-  local width=text_width()
+  local width=text_width()-120
   local widths=columns==2 and {420,width-420} or {width}
   local column,title=0,true
   local function raw(b)
@@ -272,4 +246,18 @@ function Div(div)
   div.content=pandoc.Blocks({first})
   div.content:extend(tail)
   return div
+end
+
+local directory = pandoc.path.directory(debug.getinfo(1, "S").source:gsub("^@", ""))
+local front_matter = dofile(pandoc.path.join({directory, "front-matter.lua"}))
+local layout = dofile(pandoc.path.join({directory, "layout.lua"}))
+
+function Pandoc(doc)
+  if FORMAT ~= "docx" then return end
+  doc.meta = front_matter(doc.meta)
+  doc = layout(doc, text_width())
+  if native_numbering then
+    doc.blocks:insert(1, pandoc.RawBlock("openxml", "<!--qt-docx-finalize-->"))
+  end
+  return doc
 end

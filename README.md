@@ -44,21 +44,21 @@ PDF 使用 authors-block 扩展补充机构、ORCID、贡献与通信信息；�
 
 ## Word 中编辑章节
 
-中英文 Word 的版心、字体、作者与摘要、图表题注、公式和代码块规则见[Word 排版规范](docs/Word排版规范.md)。文末列出当前成品与设计目标的差距，可用于核对后续样张。
+中英文 Word 的版心、字体和各类对象的样式见[Word 排版规范](docs/Word排版规范.md)。文末给出了桌面版 Word 的实测结果。
 
 正文用 `#`、`##`、`###`，使用 `number-sections: true` 开启章节编号；参考文献保留 `.unnumbered`。
 
 章节引用写为 `[@sec-标签]`（英文也可写 `@sec-标签`）。编号及引用统一由 Quarto 生成。增删或移动章节后，应修改 QMD 并重新渲染；Word 中的 Ctrl+A、F9 不会重新计算这些章节数字。Word 手工编辑不会写回 QMD，下一次渲染会覆盖生成文件。
 
-当前两份含作者的示例把摘要标签和首句排在同一段，分别显示“**摘要：**正文”和“**Abstract—**正文”。摘要文字为 11 磅、1.2 倍行距，首行齐边。提示框使用独立样式、固定列宽和左侧色线。
+Word 把“摘要”和 **Abstract** 与正文排在同一段，下一行回到版心左缘。摘要正文 11 pt，1.2 倍行距。填写 `keywords` 后，摘要下增加同行标签的关键词段。此版式也适用于无作者和多段摘要。
 
 ## 依赖与版本
 
-已按 Quarto 1.11.9 / Pandoc 3.10 的本地环境设计。HTML、Word 不需要 R/Python；PDF 需要 XeLaTeX、ctex、KOMA-Script 和常见 LaTeX 宏包。PDF 西文与数学使用默认 Latin Modern 字体；中文字体方案由 CTeX 自动选择，本机 Windows 使用 Windows 字体方案。Word 字体配置独立，仍保留现有参考文档。
+已按 Quarto 1.11.9 / Pandoc 3.10 的本地环境设计。HTML、Word 不需要 R/Python；PDF 需要 XeLaTeX、ctex、KOMA-Script 和常见 LaTeX 宏包。PDF 西文与数学使用默认 Latin Modern 字体；中文字体方案由 CTeX 自动选择，本机 Windows 使用 Windows 字体方案。Word 字体由项目附带的中英文参考文档管理。
 
 本地 Word、CSL 和作者扩展随仓库版本保存，渲染时不会抓取浮动 URL。来源及 SHA-256 见 `styles/manifest.json`。作者扩展的本地安装使用 `quarto add <path-to-authors-block>`；正式发布后再以真实 tag 使用 `quarto add wiederholung/authors-block@<tag>`。当前开发版本尚未发布到远端。
 
-`styles/docx/compat.lua` 在生成 DOCX 前完成样式映射、等宽分图、行内摘要及提示框结构修复。字体、字号与间距由 Word 参考文档管理。项目不再配置 `post-render`，正常渲染不解包修改成品，也不加载额外 XML 解析器。`scripts/finalize-docx.lua` 及原生编号、REF 域实现作为停用实验保留。已检查双图并列布局；复杂嵌套布局、跨页长表及其他 Word 实现需单独检查。
+`styles/docx/document.xml` 安排首页顺序。作者扩展提供姓名、机构、链接和标记，Word 参考文档控制字体与段落。`compat.lua` 在 Quarto 完成编号后处理图表、公式及提示框。数据表保留可重复的原生表头，公式保留可编辑的 Word 数学对象，代码块采用 Quarto 默认的 `arrow` 语法配色。原生章节编号实验仍可由维护者显式运行 `scripts/finalize-docx.lua`。
 
 Word 作者区采用“姓名 → ORCID → 机构数字 / † 上标 → 信封”，通信邮箱合并且不重复姓名。字号、图标比例、间距和元数据规则见 [作者区设计规范](docs/作者区设计规范.md)。该规范仅作用于 Word；HTML 和 PDF 的作者区保持各自实现。
 
@@ -66,7 +66,7 @@ Word 作者区采用“姓名 → ORCID → 机构数字 / † 上标 → 信封
 
 以下检查命令仅在模板仓库使用，新项目不携带测试和维护脚本。先运行 `quarto render --to all`，再运行 `python scripts/check-project.py`。检查脚本验证样式快照散列、Word 内部链接和作者图标、分图结构，以及 HTML 的图片和引用目标；安装 `pypdf` 后还会检查 PDF 文本、链接、A4 页面和字体嵌入。脚本检查不能代替页面目视检查。维护者可运行 `python tests/check_word_features.py` 检查编号开关、三级章节引用、自定义链接及不同提示框。`tests/check_word_fields.ps1` 保留为原生编号实验的检查脚本，当前默认跳过。
 
-当前检查环境为 Windows / Microsoft Word / MiKTeX。当前 PDF 示例中英文各 5 页，上一轮 Word 输出也各 5 页；页面数是示例结果，不是对新文档的限制。详细记录见 `docs/验证记录.md`。
+当前检查环境为 Windows / Microsoft Word / MiKTeX。当前 PDF 示例中英文各 5 页，本轮 Word 样张也各 5 页；页面数是示例结果，不是对新文档的限制。详细记录见 `docs/验证记录.md`。
 
 ## 维护
 

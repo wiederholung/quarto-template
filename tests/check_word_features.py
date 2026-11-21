@@ -111,3 +111,56 @@ format:
             {**env,'QUARTO_PROJECT_OUTPUT_FILES':str(file)})
         assert hashlib.sha256(file.read_bytes()).digest()==before,'post-render is not idempotent'
         print(f'{mode}: numbering, section references, rich content, 12 callouts and idempotence passed')
+
+    # A regular sample has authors, short tables and full-width artwork. Cover
+    # the cases where title-block placement and float ownership previously broke.
+    shutil.copyfile(ROOT/'figures/workflow.png',root/'workflow.png')
+    rows='\n'.join(f'| S-{i:03} | {i} |' for i in range(1,79))
+    source='''---
+lang: en
+abstract: |
+  First paragraph.
+
+  Second paragraph with *emphasis* and a [link](https://quarto.org).
+keywords: [Alpha, Beta]
+format:
+  docx:
+    reference-doc: styles/docx/reference-en.docx
+---
+
+![Narrow figure caption.](workflow.png){#fig-narrow width=45%}
+
+::: {.figure-note}
+An outside note.
+:::
+
+:::: {#tbl-data}
+| Sample | Value |
+|:-------|------:|
+ROWS
+
+::: {.table-note}
+Final table note.
+:::
+
+Sample values.
+::::
+'''.replace('ROWS',rows)
+    (root/'layout.qmd').write_text(source,encoding='utf8')
+    run(['quarto','render','layout.qmd','--to','docx','--quiet'],root)
+    with ZipFile(root/'output/layout.docx') as z:
+        doc=E.fromstring(z.read('word/document.xml'))
+        body=doc.find('w:body',NS)
+        def paragraph_with(role):
+            return next(p for p in body.findall('w:p',NS) if p.find(f'w:pPr/w:pStyle[@w:val="{role}"]',NS) is not None)
+        assert ''.join(paragraph_with('Abstract').itertext())=='Abstract First paragraph.'
+        second=paragraph_with('AbstractContinuation')
+        assert second.find('w:hyperlink',NS) is not None and second.find('.//w:i',NS) is not None
+        assert ''.join(paragraph_with('Keywords').itertext())=='Keywords Alpha; Beta'
+        figure,data=body.findall('w:tbl',NS)
+        assert figure.find('w:tblPr/w:tblW',NS).get(f'{{{W}}}w')=='2250'
+        assert figure.find('.//w:pStyle[@w:val="FigureNote"]',NS) is not None
+        assert len(data.findall('w:tr',NS))==79 and data.find('w:tr/w:trPr/w:tblHeader',NS) is not None
+        assert data.findall('w:tr',NS)[-1].find('.//w:pStyle[@w:val="TableTextKeep"]',NS) is not None
+        assert ''.join(paragraph_with('TableNote').itertext())=='Final table note.'
+    print('Layout: authorless rich abstract, keywords, narrow figure, note and pageable data table passed')

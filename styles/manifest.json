@@ -3,9 +3,9 @@
   "status": "local working-tree snapshot; unpublished",
   "word": {
     "repository": "https://github.com/wiederholung/pandoc_docx_template",
-    "base_commit": "8f94b9938b24bf7aa79e2a8190ef73fa97533f37",
+    "base_commit": "2ea0d81c68e8c7afe00b0a1a81e16a59eee307ae",
     "builder": "scripts/build_quarto_references.py",
-    "builder_sha256": "f509c74902ed7aeaab4e022c563e9ced3f5b7cc7e7b9ca782beba8aaa3dd02a2",
+    "builder_sha256": "0ee3de6997e329789e7ca247adb7bec9ae73f8965f6e621fb7c974e92e66cacc",
     "upstream_source": {
       "version": "0.1.0-dev",
       "source_commit": "8f94b9938b24bf7aa79e2a8190ef73fa97533f37",
@@ -14,18 +14,18 @@
       "outputs": [
         {
           "file": "templates\\quarto\\reference-zh.docx",
-          "sha256": "b1b0cb7798803e153b6e44797210141f772b8f468a222ed9bc6af14fe1e29a68"
+          "sha256": "70a8b37ee8b55dab4baa74f00c78d70bc5ce0830a218c64807acdfe683667c35"
         },
         {
           "file": "templates\\quarto\\reference-en.docx",
-          "sha256": "cc11223a59d977e1526c8f7a2fbb9fa2c363c247dbd1e9403e62b1910615cc85"
+          "sha256": "19a9088202c7022d383b0d0e24bf8860f885e6260d5f60b664aeac7842c74a23"
         }
       ]
     }
   },
   "authors_block": {
     "repository": "https://github.com/wiederholung/authors-block",
-    "base_commit": "d5b643a87691559e38a0ff87cbf801ad78763819",
+    "base_commit": "2307dd795c75d35829bf47716ec1cac221b4ab2b",
     "version": "0.3.0-dev"
   },
   "csl": {
@@ -46,6 +46,7 @@
   },
   "sha256": {
     "_extensions/wiederholung/authors-block/_extension.yml": "1adebe54020dfab403c6bc64983dd332c8f650217999a0181aad8c269636a0e0",
+    "_extensions/wiederholung/authors-block/assets/envelope.pdf": "e3e864a8af4d13a561188e7bb06f4d15d60b733e9d8688ce53f0d65868d8599d",
     "_extensions/wiederholung/authors-block/assets/envelope.png": "30b412071390c08ee3f7b5001da14a5a07e59443a374a04e7221e38a94ec810c",
     "_extensions/wiederholung/authors-block/assets/envelope.svg": "92fb3ac9bc5f9c2b0764b2700a77adb2cd7e6edb75487e9f777e652644658563",
     "_extensions/wiederholung/authors-block/assets/orcid.pdf": "95500cf451fb432d3f5a0762f404ec79ef787928fea86a4870ba6941b728b6c0",
@@ -53,24 +54,31 @@
     "_extensions/wiederholung/authors-block/assets/orcid.svg": "26483c4d9c32c10f7d5a7dc895ede560696336d336dac582dc3c6a8b94500919",
     "_extensions/wiederholung/authors-block/assets/README.md": "a6f998d03a256fde526d654b9c9b3c85ab52376c331681642cd5263c642e049a",
     "_extensions/wiederholung/authors-block/authors-block.lua": "e6bea625c48704c303c09fadeaadaa167437ab742b55c36356ff8da6d093e5f7",
-    "_extensions/wiederholung/authors-block/docx_author_block.lua": "96db8fcec976451d0c97ae7a8b82303f072f64be1d715a9627f6d707d30ee787",
+    "_extensions/wiederholung/authors-block/docx_author_block.lua": "a541f2f872d60af99d399ccbb2c373c67574de212c06ea6b12da7548e4b19010",
+    "_extensions/wiederholung/authors-block/docx_style_sizes.lua": "461f6a0d6aa9414d602f9090df92361d1a573c959a2d2516c29ac92cd0fe4ec2",
     "_extensions/wiederholung/authors-block/from_author_info_blocks.lua": "0a3799b579cb140afa3eda21fd269b2f595789da9ba44128cfc9743bfdf4a29a",
     "_extensions/wiederholung/authors-block/from_scholarly_metadata.lua": "3f19fc519487aadef4c42fec6e34b5d55d8215f5686a0ecc38421abc0009f186",
+    "_extensions/wiederholung/authors-block/latex-author-block.tex": "b00609a425c51d910599f36bef43ba252172bcb699a8bc8d63e6ee1d85e62a71",
+    "_extensions/wiederholung/authors-block/latex_author_block.lua": "874ac7f4a3c303ce5aa9106fc714f0877d013ae89f3cb24ab646b9e568e94c16",
     "_extensions/wiederholung/authors-block/LICENSE.md": "7b9bd57e616652c41977bb38fa76e83c353800858a80407a59d9ff5c9ad2c4cd",
+    "_extensions/wiederholung/authors-block/orcid.lua": "7ca6644b363c97b98b2112e70673384e9a0e87cb74636807e3139b715fb91f5a",
     "_extensions/wiederholung/authors-block/utils.lua": "ed498870ac195673a9edbc030ccaf80106694a3fd517c69c88bd754e387160ce",
+    "_extensions/wiederholung/authors-block/vendor/LICENSE.txt": "21b7b0c90e51ff9111744b02e734f37b4e093ae55ebf5eb1f8abbf380bf3803d",
+    "_extensions/wiederholung/authors-block/vendor/slaxdom.lua": "fa781c0fea307013c9c8ccc5312ca47c9ed4530eb6f7a1ef6bac1e1c853f3de4",
+    "_extensions/wiederholung/authors-block/vendor/slaxml.lua": "4e736768c061407609741baea1ebbe15e6b53cab5920defea5d7ed3b3c16c35e",
     "styles/csl/ieee.csl": "b4c7619fc16c45a31e4cc3271eab94ffe83192d3b4c7fc729470a3b459448de3",
-    "styles/docx/compat.lua": "5f7ed8f048bc044c030d58b48f25adcee0393c99c24f10b59802fa059c874768",
-    "styles/docx/reference-en.docx": "cc11223a59d977e1526c8f7a2fbb9fa2c363c247dbd1e9403e62b1910615cc85",
-    "styles/docx/reference-zh.docx": "b1b0cb7798803e153b6e44797210141f772b8f468a222ed9bc6af14fe1e29a68",
+    "styles/docx/compat.lua": "6a78a93704e08f0589d7f4e5ac1b00a099538e08f82f6b78834b585d23ed90f2",
+    "styles/docx/document.xml": "2294d58170fe8af860d0cfc1e616f3a791bb003ecca940a7fdeeedb7aa4a03aa",
+    "styles/docx/front-matter.lua": "af8a9a03be8e353d1f0f17a1975d2786d8fd1c9a1bf350a600dbb5a78e153fbe",
+    "styles/docx/layout.lua": "70475aa303b4bb56c1447cd9524a730d48e18d09a0869d1ede394dbf7c8f9dca",
+    "styles/docx/reference-en.docx": "19a9088202c7022d383b0d0e24bf8860f885e6260d5f60b664aeac7842c74a23",
+    "styles/docx/reference-zh.docx": "70a8b37ee8b55dab4baa74f00c78d70bc5ce0830a218c64807acdfe683667c35",
+    "styles/docx/research.theme": "f96766a4739137b0c5d095bf3e440adfffe3e4f5105a714152c673c8918a600d",
     "styles/html/research.css": "854ead76ce579fba4b3600f8f7eabcfd1401549c05c5cf463de669601efe2e61",
     "styles/latex/common.tex": "86960d8b18c47acd4b43158df0f01b06ce0e6496c3c28b6a478875fff00e40a5",
     "styles/latex/orcid.pdf": "95500cf451fb432d3f5a0762f404ec79ef787928fea86a4870ba6941b728b6c0",
     "styles/latex/title.tex": "4716d754ee0ccdd593a0dd5be3d11631cc03441916e39f01e5ba05339d94efd6",
     "styles/latex/zh.tex": "21caf3f3d5f8de37c4722758fe711a48af093cff4e17b49c15bd40881c524a3d",
-    "styles/README.md": "f088e360912d0a2cc29685c3dceb7f71fae51eb99f019dc941a20933902dbb3a",
-    "_extensions/wiederholung/authors-block/latex-author-block.tex": "b00609a425c51d910599f36bef43ba252172bcb699a8bc8d63e6ee1d85e62a71",
-    "_extensions/wiederholung/authors-block/latex_author_block.lua": "874ac7f4a3c303ce5aa9106fc714f0877d013ae89f3cb24ab646b9e568e94c16",
-    "_extensions/wiederholung/authors-block/orcid.lua": "7ca6644b363c97b98b2112e70673384e9a0e87cb74636807e3139b715fb91f5a",
-    "_extensions/wiederholung/authors-block/assets/envelope.pdf": "e3e864a8af4d13a561188e7bb06f4d15d60b733e9d8688ce53f0d65868d8599d"
+    "styles/README.md": "d85cdbe3a1be85e608c6ec027c7b31248038b6bdd3230ef730ffada4e15f5e8a"
   }
 }

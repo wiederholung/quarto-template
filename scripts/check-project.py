@@ -17,6 +17,10 @@ R='http://schemas.openxmlformats.org/officeDocument/2006/relationships'
 NS={'w':W,'r':R,'a':'http://schemas.openxmlformats.org/drawingml/2006/main',
     'asvg':'http://schemas.microsoft.com/office/drawing/2016/SVG/main'}
 ORCID='https://orcid.org/0000-0002-1825-0097'
+AUTHORS = {
+    'zh': ['Josiah Carberry', '示例作者', 'Catherine Alexandra Montgomery', '陈明'],
+    'en': ['Josiah Carberry', 'Alex Example', 'Sam Lee', 'Robin Example'],
+}
 checks=[]
 
 def require(condition,message):
@@ -66,10 +70,35 @@ for lang in ('zh','en'):
         require(z.testzip() is None,f'{lang} DOCX damaged ZIP')
         doc=ET.fromstring(z.read('word/document.xml'))
         styles=ET.fromstring(z.read('word/styles.xml'))
+        core=ET.fromstring(z.read('docProps/core.xml'))
+        creator=core.findtext('{http://purl.org/dc/elements/1.1/}creator')
+        require(creator=='; '.join(AUTHORS[lang]), f'{lang} DOCX Author property: {creator!r}')
         rels={r.get('Id'):r.get('Target') for r in ET.fromstring(z.read('word/_rels/document.xml.rels'))}
+        footer_ref=doc.find('w:body/w:sectPr/w:footerReference[@w:type="default"]',NS)
+        require(footer_ref is not None,f'{lang} DOCX default footer missing')
+        footer=ET.fromstring(z.read('word/'+rels[footer_ref.get(f'{{{R}}}id')]))
+        footer_paras=footer.findall('.//w:p',NS)
+        footer_fields=[(f.text or '').split() for f in footer.findall('.//w:instrText',NS)]
+        require(len(footer_paras)==1 and footer_paras[0] in list(footer)
+                and len(footer_fields)==1 and footer_fields[0][:1]==['PAGE']
+                and footer.find('.//w:br',NS) is None,
+                f'{lang} DOCX footer must have a single paragraph containing the PAGE field')
         ids=[s.get(f'{{{W}}}styleId') for s in styles.findall('w:style',NS)]
         require(len(ids)==len(set(ids)),f'{lang} DOCX duplicate style IDs')
         require(not styles.findall('.//w:autoRedefine',NS),f'{lang} DOCX styles auto-update')
+        default_char=styles.find('w:style[@w:type="character"][@w:default="1"]',NS)
+        require(default_char is not None, f'{lang} DOCX default character style missing')
+        for name in ('Hyperlink','FollowedHyperlink'):
+            style=styles.find(f'w:style/w:name[@w:val="{name}"]/..',NS)
+            require(style is not None and style.get(f'{{{W}}}type')=='character',
+                    f'{lang} DOCX {name} character style missing')
+            parent=style.find('w:basedOn',NS)
+            require(parent is not None and parent.get(f'{{{W}}}val')==default_char.get(f'{{{W}}}styleId'),
+                    f'{lang} DOCX {name} must inherit the default character style')
+            props=style.find('w:rPr',NS)
+            require(props is not None and props.find('w:color[@w:val="000000"]',NS) is not None
+                    and props.find('w:u[@w:val="none"]',NS) is not None,
+                    f'{lang} DOCX {name} must use black text without an underline')
         links=[h for h in doc.findall('.//w:hyperlink',NS) if rels.get(h.get(f'{{{R}}}id'))==ORCID]
         require(any(h.find('.//w:drawing',NS) is not None for h in links),f'{lang} DOCX missing linked ORCID image')
         svg=links[0].find('.//asvg:svgBlip',NS)
@@ -129,8 +158,21 @@ for lang in ('zh','en'):
                     f'{lang} DOCX Quarto section link missing: {target}')
         abstract=[p for p in doc.findall('.//w:p',NS)
                   if p.find('w:pPr/w:pStyle[@w:val="Abstract"]',NS) is not None]
-        require(len(abstract)==1 and ''.join(abstract[0].itertext()).startswith('摘要：' if lang=='zh' else 'Abstract—'),
+        require(len(abstract)==1 and ''.join(abstract[0].itertext()).startswith('摘要　' if lang=='zh' else 'Abstract '),
                 f'{lang} DOCX abstract label must run into its first paragraph')
+        keywords=[p for p in doc.findall('w:body/w:p',NS)
+                  if p.find('w:pPr/w:pStyle[@w:val="Keywords"]',NS) is not None]
+        require(len(keywords)==1 and ''.join(keywords[0].itertext()).startswith('关键词　' if lang=='zh' else 'Keywords '),
+                f'{lang} DOCX keyword label and terms must share a paragraph')
+        for role,p in [('Abstract',abstract[0]),('Keywords',keywords[0])]:
+            require(p.find(f'w:r/w:rPr/w:rStyle[@w:val="{role}Label"]',NS) is not None,
+                    f'{lang} DOCX {role} label must inherit its character style')
+        body_paras=doc.findall('w:body/w:p',NS)
+        date_id=next(s.get(f'{{{W}}}styleId') for s in styles.findall('w:style',NS)
+                     if s.find('w:name[@w:val="Date"]',NS) is not None)
+        date=next(p for p in body_paras if p.find(f'w:pPr/w:pStyle[@w:val="{date_id}"]',NS) is not None)
+        positions=[body_paras.index(p) for p in (author,contacts[0],date,abstract[0],keywords[0])]
+        require(positions==sorted(positions),f'{lang} DOCX title-block order')
         for table in doc.findall('.//w:tbl',NS):
             if table.find('w:tblPr/w:tblBorders/w:left[@w:color="0758E5"]',NS) is None: continue
             grid=table.findall('w:tblGrid/w:gridCol',NS)
@@ -145,7 +187,29 @@ for lang in ('zh','en'):
         pair_rows=[row for row in doc.findall('.//w:tr',NS) if len(row.findall('w:tc',NS))==2 and
                    all(c.find('.//w:drawing',NS) is not None for c in row.findall('w:tc',NS))]
         require(bool(pair_rows),f'{lang} DOCX panels are not side by side')
-        require(doc.find('.//w:pPr/w:pStyle[@w:val="TableText"]',NS) is not None,f'{lang} DOCX data-table typography missing')
+        tables=doc.findall('w:body/w:tbl',NS)
+        data=[t for t in tables if t.find('w:tblPr/w:tblStyle[@w:val="Table"]',NS) is not None]
+        require(len(data)==1 and data[0].find('w:tr/w:trPr/w:tblHeader',NS) is not None,
+                f'{lang} DOCX data table needs a top-level repeating header')
+        for cell in data[0].findall('w:tr/w:tc',NS):
+            require(any(e.get(f'{{{W}}}val') in ('TableText','TableTextKeep') for e in cell.findall('.//w:pStyle',NS)),
+                    f'{lang} DOCX data-table typography missing')
+        equations=[t for t in tables if t.find('w:tblPr/w:tblStyle[@w:val="EquationLayout"]',NS) is not None]
+        require(len(equations)==2,f'{lang} DOCX missing numbered equations')
+        for number,table in enumerate(equations,1):
+            cells=table.findall('w:tr/w:tc',NS)
+            require(len(cells)==3 and cells[1].find('.//{http://schemas.openxmlformats.org/officeDocument/2006/math}oMath') is not None
+                    and ''.join(cells[2].itertext())==f'({number})',f'{lang} DOCX equation or tag placement')
+        for key,alignment in [('ImageCaption','center'),('TableCaption','center'),('PanelFigure','center'),
+                              ('FigureNote','left'),('TableNote','left'),('EquationNumber','right')]:
+            require(styles.find(f'w:style[@w:styleId="{key}"]/w:pPr/w:jc[@w:val="{alignment}"]',NS) is not None,
+                    f'{lang} DOCX {key} style alignment')
+        code_style=styles.find('w:style[@w:styleId="SourceCode"]/w:pPr',NS)
+        require(code_style is not None and code_style.find('w:shd[@w:fill="F1F3F5"]',NS) is not None,
+                f'{lang} DOCX code paragraph shading')
+        for side in ('left','right'):
+            require(code_style.find(f'w:pBdr/w:{side}[@w:color="F1F3F5"]',NS) is not None,
+                    f'{lang} DOCX code paragraph {side} border color')
         require('literate programming' in ''.join(doc.itertext()).lower(),
                 f'{lang} DOCX bibliography not rendered')
     checks.append(f'{lang} DOCX: ZIP, styles, links, baseline SVG before superscripts, panels and references passed')
@@ -175,10 +239,8 @@ else:
                     embedded=descriptor is not None and any(k in descriptor.get_object() for k in ('/FontFile','/FontFile2','/FontFile3'))
                     fonts[name]=embedded or child.get('/Subtype')=='/Type3'
         # Class-owned title with the authors-block LaTeX backend.
-        names=['Josiah Carberry','示例作者','Catherine Alexandra Montgomery','陈明'] if lang=='zh' else [
-            'Josiah Carberry','Alex Example','Sam Lee','Robin Example']
         first_page=''.join(reader.pages[0].extract_text().split())
-        for name in names:
+        for name in AUTHORS[lang]:
             require(''.join(name.split()) in first_page,f'{lang} PDF author missing: {name}')
         require(any('orcid.org/0000-0002-1825-0097' in uri for uri in uris),f'{lang} PDF ORCID link missing')
         require('mailto:example@example.org' in uris and 'mailto:second@example.org' in uris,f'{lang} PDF correspondence missing')

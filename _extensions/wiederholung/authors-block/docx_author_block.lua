@@ -4,8 +4,8 @@ local M = {}
 local stringify = pandoc.utils.stringify
 local module_dir = pandoc.path.directory(debug.getinfo(1,"S").source:gsub("^@", ""))
 
--- Our serif author-block design. Sizes are points; other geometry is relative.
--- Match these sizes to the reference DOCX's Author / Affiliation styles.
+-- Fallback point sizes for references without a usable Author / Affiliation size.
+-- Other dimensions are relative to the effective paragraph size.
 local layout = {
   author_size = 12, note_size = 10.5,
   orcid = .75, envelope_width = .85, envelope_canvas_height = .75,
@@ -47,8 +47,7 @@ local function inlines(value)
   return inlines(stringify(value))
 end
 
-local function name_inlines(value)
-  local content = inlines(value)
+local function display_name(content)
   -- Normal names stay together. Very long names retain their word break points.
   if utf8.len(stringify(content)) <= 40 then
     content = pandoc.Span(content):walk({
@@ -73,7 +72,7 @@ local function gap(size, em)
   local spacing = math.floor((em-.25)*size*20+.5)
   local half_points = math.floor(size*2+.5)
   return pandoc.RawInline("openxml", string.format(
-    '<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>' ..
+    '<w:r><w:rPr>' ..
     '<w:spacing w:val="%d"/><w:sz w:val="%d"/><w:szCs w:val="%d"/>' ..
     '</w:rPr><w:t xml:space="preserve">\u{00A0}</w:t></w:r>',
     spacing,half_points,half_points))
@@ -144,8 +143,9 @@ function M.render(doc)
     assert(size and size>0,"authors-block: "..key.." must be a positive point size")
     return size
   end
-  local author_size=size_option("author-size",layout.author_size)
-  local note_size=size_option("note-size",layout.note_size)
+  local sizes=require("docx_style_sizes")(PANDOC_WRITER_OPTIONS.reference_doc)
+  local author_size=size_option("author-size",sizes.author or layout.author_size)
+  local note_size=size_option("note-size",sizes.note or layout.note_size)
   local zh=stringify(meta.lang or ""):match("^zh") ~= nil
   local affiliations=meta.affiliations or {}
   -- Let Pandoc allocate bookmark IDs; reserve names against existing content.
@@ -168,6 +168,7 @@ function M.render(doc)
   end
   local equal_target=anchor("equal")
   local names=pandoc.Inlines({})
+  local plain_names={}
   local emails={}
   local equal=false
   for n,author in ipairs(authors) do
@@ -175,7 +176,9 @@ function M.render(doc)
       names:insert(pandoc.Str(zh and "，" or ","))
       if not zh then names:insert(pandoc.Space()) end
     end
-    names:extend(name_inlines(author.name))
+    local name = inlines(author.name)
+    plain_names[n] = stringify(name):match("^%s*(.-)%s*$")
+    names:extend(display_name(name))
     local numbers,seen={},{}
     for _,ref in ipairs(author.affiliations or {}) do
       local number=index[stringify(ref.ref or ref.id or "")]
@@ -235,6 +238,24 @@ function M.render(doc)
     end
     details:insert(styled(line,equal and "Author Contact Continued" or "Author Contact"))
   end
+  meta.authors=nil; meta.affiliations=nil
+  local placement = options and stringify(options.placement or "")
+  if placement == "template" then
+    -- Pandoc writes dc:creator from author. Keep the decorated byline in the
+    -- template's header so icon descriptions and line-break controls stay local.
+    meta.author = pandoc.MetaList(plain_names)
+    details:insert(1, styled(names, "Author"))
+    meta["authors-block-header"] = pandoc.MetaBlocks(details)
+    return pandoc.Pandoc(doc.blocks, meta)
+  end
+
+  -- Stock and earlier custom templates print their byline from the author loop.
+  meta.author=pandoc.MetaList({pandoc.MetaInlines(names)})
+  if placement == "metadata" then
+    meta["authors-block-details"]=pandoc.MetaBlocks(details)
+    return pandoc.Pandoc(doc.blocks,meta)
+  end
+  -- Preserve title-block order for standalone users of Pandoc's stock template.
   if meta.date then
     details:insert(styled(inlines(meta.date),"Date")); meta.date=nil
   end
@@ -248,8 +269,6 @@ function M.render(doc)
     meta.abstract=nil
   end
   details:extend(doc.blocks)
-  meta.author=pandoc.MetaList({pandoc.MetaInlines(names)})
-  meta.authors=nil; meta.affiliations=nil
   return pandoc.Pandoc(details,meta)
 end
 return M

@@ -43,6 +43,7 @@ format:
   html:
     toc: true
   docx:
+    keywords: [科研写作, 交叉引用, 可复现文档]
     reference-doc: styles/docx/reference-zh.docx
   pdf:
     documentclass: ctexart

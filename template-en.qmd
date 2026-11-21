@@ -44,6 +44,7 @@ format:
     toc: true
     toc-depth: 2
   docx:
+    keywords: [research writing, cross-references, reproducible documents]
     reference-doc: styles/docx/reference-en.docx
   pdf:
     documentclass: scrartcl
@@ -65,7 +66,7 @@ quarto render template-en.qmd --to pdf
 quarto preview template-en.qmd --to html
 ```
 
-Word uses a reference document stored in this repository. PDF uses Quarto's built-in LaTeX template with XeLaTeX and KOMA-Script's `scrartcl` class. The baseline retains the class's fonts, headings and paragraph rules, with Quarto's standard A4 type area. The first PDF build requires a TeX distribution and the relevant packages. The examples contain static code, so rendering does not require Python or R.
+Word uses a reference document stored in this repository. PDF uses Quarto's built-in LaTeX template with XeLaTeX and KOMA-Script's `scrartcl` class. The class controls fonts, headings and paragraphs. All four margins are 1 inch (25.4 mm) on A4 paper. The first PDF build requires a TeX distribution and the relevant packages. The examples contain static code, so rendering does not require Python or R.
 
 ## Headings and paragraphs {#sec-headings}
 

@@ -10,11 +10,13 @@ Word 样式由相邻 `pandoc_docx_template` 仓库中的 `scripts/build_quarto_r
 
 Word 作者区采用本项目的独立规范：“姓名 → ORCID → 机构数字及 † 上标 → 通信信封”。作者 12 pt，机构与说明 10.5 pt，居中、1.15 倍行距。ORCID 直径 0.75 em，保留绿色；信封为黑色矢量轮廓，保持行内大小。机构每项一段，同等贡献使用 †，通信邮箱合并为一段、按作者顺序排列，不重复姓名。日期和摘要继续排在作者信息之后。作者元数据和渲染用法见 [使用说明](../docs/使用说明.md)。详细设计记录保留在模板仓库。
 
-Word 的图标嵌入 SVG，并携带旧版阅读器所需的 PNG 备用图；图标、上标及间距的比例集中在扩展中。修改参考文档的作者或说明字号时，可用 `authors-block.docx.author-size` 和 `note-size` 同步行内几何尺寸。素材来源和转换命令见扩展的 `assets/README.md`，无需渲染时联网或安装 SVG 转换器。
+Word 使用带 PNG 回退的 SVG。扩展从参考文档的 Author 和 Affiliation 样式读取有效字号，沿继承链推算图标、间距和上标。需要单独覆盖行内比例的基准时可填写 `authors-block.docx.author-size`、`note-size`。素材来源见扩展的 `assets/README.md`。
 
 PDF 采用 Quarto 内置 LaTeX 模板与文档类排版，由 authors-block 补充机构、ORCID、同等贡献和通信信息。`latex/title.tex`、`latex/common.tex`、`latex/zh.tex` 及 ORCID 素材作为旧设计保留但不启用。PDF 基线的测量与开发记录保留在模板仓库。HTML 使用 Quarto 原生作者区。
 
-`docx/compat.lua` 在 Quarto 核心过滤器之后运行：移除覆盖题注样式的直接属性，区分数据表与布局表，将等宽分图整理为原生 Word 并列表格。分图与各自题注保持同段，分页由参考文档样式控制。该过滤器还合并 Word 摘要标签与首段，并在写出 DOCX 前修正 `docx-callout` 区块的列网格、宽度与段落属性。提示框宽度读取参考文档的页面与页边距。正常渲染没有 `post-render` 步骤。章节编号和引用保留 Quarto 默认输出。两个脚本中的原生多级编号及 REF 域实现保留但默认不启用，仅供维护者设置环境变量 `QUARTO_DOCX_NATIVE_NUMBERING=1` 并显式运行 `finalize-docx.lua` 开启实验；只设置环境变量不能完成原生编号。提示框字号、间距由参考文档的 Callout Title / Body / Icon 样式管理。当前示例覆盖单图、双图、三线表及表注；不承诺任意嵌套版式都能自动转换。
+`docx/document.xml` 基于 Pandoc 3.10 的 DOCX 正文模板，接收作者说明，并依次排日期、摘要与关键词。`front-matter.lua` 为摘要首段、续段、关键词及行内标签绑定样式。升级 Pandoc 时用 `quarto pandoc -D docx` 对照模板。
+
+`docx/compat.lua` 在 Quarto 核心过滤器之后处理直接格式、分图及提示框。`layout.lua` 把题注和注限制在对象宽度内，保留可独立分页的数据表，将已编号公式和编号放在各自的位置。Word 代码默认使用 Quarto 的 `arrow` 配色。自定义配色 `docx/research.theme` 作为备选保存在样式快照中。章节编号沿用 Quarto，常规渲染在 Pandoc 写出 DOCX 前完成。
 
 维护者在两个来源仓库检查修改后，运行 `python scripts/sync-styles.py` 更新快照，再重新渲染受影响的格式并运行检查。普通使用者无需运行这个脚本。发布时记录真实发布 commit/tag；已经创建的项目不会自动更新。
 
