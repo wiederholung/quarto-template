@@ -48,6 +48,7 @@ format:
   pdf:
     documentclass: scrartcl
     classoption: [abstract=true]
+    geometry: margin=1in
 ---
 
 # Start writing {#sec-start}

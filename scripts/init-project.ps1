@@ -1,7 +1,8 @@
-# Quarto template initialization omits dotfiles and README.md.
-# Supply project housekeeping without replacing existing user files.
+# Optional maintainer utility; not copied by `quarto use template`.
+# Rendering does not require this script. Supply Git housekeeping on request.
+param([string]$ProjectPath = (Split-Path $PSScriptRoot -Parent))
 $ErrorActionPreference = 'Stop'
-$projectRoot = Split-Path $PSScriptRoot -Parent
+$projectRoot = (Resolve-Path -LiteralPath $ProjectPath).Path
 $files = @{
     '.gitattributes' = @'
 styles/** -text whitespace=cr-at-eol
@@ -21,6 +22,7 @@ _extensions/** -text whitespace=cr-at-eol
 *.toc
 *.synctex.gz
 !styles/latex/*.tex
+!_extensions/**/latex-author-block.tex
 '@
     '.quartoignore' = @'
 output/

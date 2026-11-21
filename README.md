@@ -7,8 +7,7 @@
 ```powershell
 mkdir my-document
 cd my-document
-quarto use template ../quarto-template --no-prompt
-powershell -NoProfile -File scripts/init-project.ps1
+quarto use template ../quarto-template
 quarto render template-zh.qmd --to docx
 quarto render template-zh.qmd --to pdf
 quarto preview template-zh.qmd --to html
@@ -16,7 +15,9 @@ quarto preview template-zh.qmd --to html
 
 在模板仓库中运行 `quarto render --to all` 可生成两份示例的全部六种输出。逐篇写作时，使用上面的单篇命令。
 
-上面的源仓库路径应按实际位置调整。首次初始化复制中英文两份示例，按需要保留、重命名并改写其中一份。Quarto 不会替这两个文件自动命名。`quarto use template` 不复制 README 和点文件，因此执行一次初始化脚本；脚本不会覆盖已有文件。`docs/使用说明.md` 会随项目复制。
+上面的源仓库路径应按实际位置调整。首次初始化复制中英文两份示例，按需要保留、重命名并改写其中一份。Quarto 不会替这两个文件自动命名。`quarto use template` 后即可渲染，不需要运行初始化脚本。默认保留 Quarto 的交互提示；`--no-prompt` 仅用于跳过确认的自动化场景。`docs/使用说明.md` 会随项目复制，其中提供可选的 Git 配置。
+
+新项目仅复制写作配置、两份 QMD、样式与扩展快照、示例文献和图片，以及 `docs/使用说明.md`。`.quartoignore` 排除 `tests/`、`scripts/` 和开发设计、验证文档；它们保留在模板仓库供维护使用。
 
 ## 配置分工
 
@@ -37,17 +38,19 @@ HTML 使用 Quarto 的 `cosmo` 主题，不加载 `styles/html/research.css`。�
 
 中文选用 CTeX 的 `ctexart`，英文选用 KOMA-Script 的 `scrartcl`。设计从文档类和 Quarto 内置模板出发，先记录原生结果，再添加有明确需求的覆盖；后续 Word 样式以这套成熟排版为参考。
 
-公共 PDF 配置只显式指定 XeLaTeX、A4 和 `indent: true`，使文档类管理段落缩进。中文字体方案由 CTeX 根据运行环境自动选择。中文单篇设置 `geometry: margin=1in`，四边页边距为 25.4 mm；英文保留 KOMA 版心。字号、行距、标题、题注、浮动和页眉页脚使用类及 Quarto 的默认处理，不加载旧 `common.tex`、`zh.tex`、`title.tex`。
+公共 PDF 配置只显式指定 XeLaTeX、A4 和 `indent: true`，使文档类管理段落缩进。中文字体方案由 CTeX 根据运行环境自动选择。中英文单篇均设置 `geometry: margin=1in`，四边页边距为 25.4 mm。字号、行距、标题、题注、浮动和页眉页脚使用类及 Quarto 的默认处理，不加载旧 `common.tex`、`zh.tex`、`title.tex`。
 
 PDF 使用 authors-block 扩展补充机构、ORCID、贡献与通信信息；作者字体、日期和标题区仍由文档类处理。中文摘要带标题；英文通过 `classoption: [abstract=true]` 显示 Abstract 标题。原生结果和实测尺寸见 [PDF 基线记录](docs/PDF基线.md)。
 
 ## Word 中编辑章节
 
+中英文 Word 的版心、字体、作者与摘要、图表题注、公式和代码块规则见[Word 排版规范](docs/Word排版规范.md)。文末列出当前成品与设计目标的差距，可用于核对后续样张。
+
 正文用 `#`、`##`、`###`，使用 `number-sections: true` 开启章节编号；参考文献保留 `.unnumbered`。
 
 章节引用写为 `[@sec-标签]`（英文也可写 `@sec-标签`）。编号及引用统一由 Quarto 生成。增删或移动章节后，应修改 QMD 并重新渲染；Word 中的 Ctrl+A、F9 不会重新计算这些章节数字。Word 手工编辑不会写回 QMD，下一次渲染会覆盖生成文件。
 
-摘要采用同段标签：中文“**摘要：**正文”，英文“**Abstract—**正文”，正文 11 磅、1.2 倍行距，不加首行缩进。提示框使用独立样式、固定列宽和左侧色线，避免继承正文缩进和三线表边框。
+当前两份含作者的示例把摘要标签和首句排在同一段，分别显示“**摘要：**正文”和“**Abstract—**正文”。摘要文字为 11 磅、1.2 倍行距，首行齐边。提示框使用独立样式、固定列宽和左侧色线。
 
 ## 依赖与版本
 
@@ -61,11 +64,13 @@ Word 作者区采用“姓名 → ORCID → 机构数字 / † 上标 → 信封
 
 ## 检查效果
 
-先运行 `quarto render --to all`，再运行 `python scripts/check-project.py`。检查脚本验证样式快照散列、Word 内部链接和作者图标、分图结构，以及 HTML 的图片和引用目标；安装 `pypdf` 后还会检查 PDF 文本、链接、A4 页面和字体嵌入。脚本检查不能代替页面目视检查。维护者可运行 `python tests/check_word_features.py` 检查编号开关、三级章节引用、自定义链接及不同提示框。`tests/check_word_fields.ps1` 保留为原生编号实验的检查脚本，当前默认跳过。
+以下检查命令仅在模板仓库使用，新项目不携带测试和维护脚本。先运行 `quarto render --to all`，再运行 `python scripts/check-project.py`。检查脚本验证样式快照散列、Word 内部链接和作者图标、分图结构，以及 HTML 的图片和引用目标；安装 `pypdf` 后还会检查 PDF 文本、链接、A4 页面和字体嵌入。脚本检查不能代替页面目视检查。维护者可运行 `python tests/check_word_features.py` 检查编号开关、三级章节引用、自定义链接及不同提示框。`tests/check_word_fields.ps1` 保留为原生编号实验的检查脚本，当前默认跳过。
 
 当前检查环境为 Windows / Microsoft Word / MiKTeX。当前 PDF 示例中英文各 5 页，上一轮 Word 输出也各 5 页；页面数是示例结果，不是对新文档的限制。详细记录见 `docs/验证记录.md`。
 
 ## 维护
+
+`scripts/init-project.ps1 -ProjectPath <新项目目录>` 是可选的 Git 配置辅助工具，不参与渲染，也不随模板复制；它只创建缺少的点文件，不覆盖已有配置。
 
 `scripts/build-example-figures.py` 仅重建演示图片，需要 Pillow；渲染示例无需执行它。`scripts/sync-styles.py` 将已检查的相邻来源仓库更新为本地快照。正式更新应先提交当前项目，明确选择版本，再检查六种输出。
 

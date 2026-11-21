@@ -9,3 +9,11 @@ output/
 *.toc
 *.synctex.gz
 *.log
+
+# Repository maintenance is not part of a new writing project.
+tests/
+scripts/
+docs/验证记录.md
+docs/作者区设计规范.md
+docs/Word排版规范.md
+docs/PDF基线.md

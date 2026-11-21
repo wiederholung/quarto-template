@@ -13,7 +13,7 @@ format:
   docx:
     # Printable width of the A4 reference documents, in inches.
     page-width: 5.75
-    syntax-highlighting: github
+    # syntax-highlighting: github
     filters:
       - authors-block
       - quarto
