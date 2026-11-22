@@ -64,7 +64,13 @@ Word 作者区采用“姓名 → ORCID → 机构数字 / † 上标 → 信封
 
 ## 检查效果
 
-以下检查命令仅在模板仓库使用，新项目不携带测试和维护脚本。先运行 `quarto render --to all`，再运行 `python scripts/check-project.py`。检查脚本验证样式快照散列、Word 内部链接和作者图标、分图结构，以及 HTML 的图片和引用目标；安装 `pypdf` 后还会检查 PDF 文本、链接、A4 页面和字体嵌入。脚本检查不能代替页面目视检查。维护者可运行 `python tests/check_word_features.py` 检查编号开关、三级章节引用、自定义链接及不同提示框。`tests/check_word_fields.ps1` 保留为原生编号实验的检查脚本，当前默认跳过。
+以下检查命令仅在模板仓库使用，新项目不携带测试和维护脚本。先运行 `quarto render --to all`，再运行 `python scripts/check-project.py`。检查脚本验证样式快照散列、Word 内部链接和作者图标、分图结构，以及 HTML 的图片和引用目标；安装 `pypdf` 后还会检查 PDF 文本、链接、A4 页面和字体嵌入。脚本检查不能代替页面目视检查。维护者可运行 `python tests/check_word_features.py` 检查编号开关、三级章节引用、自定义链接及不同提示框及非等宽子图。`tests/check_word_fields.ps1` 保留为原生编号实验的检查脚本，当前默认跳过。
+
+维护者可在首次渲染后用 .NET 10 SDK 检查 Microsoft 365 的 DOCX 结构。命令直接读取生成文件和参考模板。
+
+```sh
+dotnet run --file tests/validate-docx.cs -- styles/docx/reference-zh.docx styles/docx/reference-en.docx output/template-zh.docx output/template-en.docx
+```
 
 当前检查环境为 Windows / Microsoft Word / MiKTeX。当前 PDF 示例中英文各 5 页，本轮 Word 样张也各 5 页；页面数是示例结果，不是对新文档的限制。详细记录见 `docs/验证记录.md`。
 

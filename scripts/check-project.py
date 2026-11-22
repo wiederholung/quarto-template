@@ -148,6 +148,16 @@ for lang in ('zh','en'):
         require(ref_num is None or ref_num.get(f'{{{W}}}val')=='0',
                 f'{lang} DOCX references must remain unnumbered')
         numbering=ET.fromstring(z.read('word/numbering.xml'))
+        list_ids=[e.get(f'{{{W}}}val') for e in numbering.findall('w:abstractNum/w:nsid',NS)]
+        require(len(list_ids)==len(set(list_ids)),f'{lang} DOCX has colliding Word list identities')
+        for level,indent in enumerate(('0','280','560'),1):
+            toc=styles.find(f'w:style/w:name[@w:val="toc {level}"]/../w:pPr/w:ind',NS)
+            require(toc is not None and toc.get(f'{{{W}}}left')==indent,f'{lang} TOC level {level} indent')
+        bibliography=styles.find('w:style/w:name[@w:val="Bibliography"]/../w:pPr',NS)
+        require(bibliography is not None and
+                bibliography.find('w:ind[@w:left="640"][@w:hanging="640"]',NS) is not None and
+                bibliography.find('w:tabs/w:tab[@w:val="left"][@w:pos="640"]',NS) is not None,
+                f'{lang} bibliography needs matching text and tab positions')
         require(numbering.find('.//w:name[@w:val="QuartoNativeHeadings"]',NS) is None,
                 f'{lang} DOCX native heading numbering should be disabled')
         fields=[e.text or '' for e in doc.findall('.//w:instrText',NS)]

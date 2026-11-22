@@ -16,7 +16,7 @@ PDF 采用 Quarto 内置 LaTeX 模板与文档类排版，由 authors-block 补�
 
 `docx/document.xml` 基于 Pandoc 3.10 的 DOCX 正文模板，接收作者说明，并依次排日期、摘要与关键词。`front-matter.lua` 为摘要首段、续段、关键词及行内标签绑定样式。升级 Pandoc 时用 `quarto pandoc -D docx` 对照模板。
 
-`docx/compat.lua` 在 Quarto 核心过滤器之后处理直接格式、分图及提示框。`layout.lua` 把题注和注限制在对象宽度内，保留可独立分页的数据表，将已编号公式和编号放在各自的位置。Word 代码默认使用 Quarto 的 `arrow` 配色。自定义配色 `docx/research.theme` 作为备选保存在样式快照中。章节编号沿用 Quarto，常规渲染在 Pandoc 写出 DOCX 前完成。
+`docx/panel-cells.lua` 在 Quarto 分配列宽前清除分图之间自动生成的空段。`docx/compat.lua` 在分配后按每行的实际列宽放置图片和子题，并处理其他直接格式及提示框。`layout.lua` 把题注和注限制在对象宽度内，保留可独立分页的数据表，将已编号公式和编号放在各自的位置。Word 代码默认使用 Quarto 的 `arrow` 配色。自定义配色 `docx/research.theme` 作为备选保存在样式快照中。章节编号沿用 Quarto，常规渲染在 Pandoc 写出 DOCX 前完成。
 
 维护者在两个来源仓库检查修改后，运行 `python scripts/sync-styles.py` 更新快照，再重新渲染受影响的格式并运行检查。普通使用者无需运行这个脚本。发布时记录真实发布 commit/tag；已经创建的项目不会自动更新。
 

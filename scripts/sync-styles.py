@@ -14,10 +14,22 @@ for lang in ("zh","en"):
     shutil.copyfile(args.word_repo/f"templates/quarto/reference-{lang}.docx",dest)
 extension=ROOT/"_extensions/wiederholung/authors-block"
 extension.parent.mkdir(parents=True, exist_ok=True)
+source_extension = args.authors_repo / "_extensions/authors-block"
+
+def copy_extension_file(source, destination):
+    # A Windows checkout may use different line endings. Preserve the exact
+    # installed bytes and their hash when the reviewed text is unchanged.
+    source = Path(source)
+    previous = extension / source.relative_to(source_extension)
+    if previous.is_file() and source.suffix in {".lua", ".md", ".tex", ".txt", ".yml", ".svg"}:
+        if previous.read_bytes().replace(b"\r\n", b"\n") == source.read_bytes().replace(b"\r\n", b"\n"):
+            source = previous
+    return shutil.copy2(source, destination)
+
 with TemporaryDirectory(dir=extension.parent) as temporary:
     staged = Path(temporary) / "staged"
     previous = Path(temporary) / "previous"
-    shutil.copytree(args.authors_repo / "_extensions/authors-block", staged)
+    shutil.copytree(source_extension, staged, copy_function=copy_extension_file)
     for required in ("_extension.yml", "assets/orcid.pdf"):
         if not (staged / required).is_file():
             raise FileNotFoundError(staged / required)

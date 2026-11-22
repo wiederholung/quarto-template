@@ -1,4 +1,4 @@
-"""Quarto integration cases for native heading references and callout structure.
+"""Quarto integration cases for Word headings, callouts and page layout.
 
 Run with Python 3; Quarto must be on PATH. No Word/Python packages needed.
 The temporary project is deliberately outside the source tree.
@@ -164,3 +164,44 @@ Sample values.
         assert data.findall('w:tr',NS)[-1].find('.//w:pStyle[@w:val="TableTextKeep"]',NS) is not None
         assert ''.join(paragraph_with('TableNote').itertext())=='Final table note.'
     print('Layout: authorless rich abstract, keywords, narrow figure, note and pageable data table passed')
+
+    # Check both the Word grid and its pictures. A correct caption or grid on
+    # its own does not prevent Word from clipping an oversized inline image.
+    group_cases = [
+        ('wide', 'layout="[[65,35]]"', 2, [[.65, .35]]),
+        ('reverse', 'layout="[[35,65]]"', 2, [[.35, .65]]),
+        ('mixed', 'layout="[[1,1],[1]]"', 3, [[.5, .5], [1]]),
+        ('thirds', 'layout-ncol=3', 3, [[1/3]*3]),
+        ('plain', 'layout="[[65,35]]"', 2, [[.65, .35]]),
+    ]
+    groups = []
+    for name, layout, count, _ in group_cases:
+        panels = []
+        for i in range(count):
+            attr = '' if name == 'plain' else f'{{#fig-{name}-{i+1}}}'
+            panels.append(f'![Panel {i+1}](workflow.png){attr}')
+        groups.append(f'::: {{#fig-{name} {layout}}}\n' + '\n\n'.join(panels) + '\n\nGroup caption.\n:::\n')
+    front = '---\nformat:\n  docx:\n    reference-doc: styles/docx/reference-en.docx\n---\n'
+    (root/'panels.qmd').write_text(front + '\n'.join(groups), encoding='utf8')
+    run(['quarto','render','panels.qmd','--to','docx','--quiet'],root)
+    with ZipFile(root/'output/panels.docx') as archive:
+        doc = E.fromstring(archive.read('word/document.xml'))
+        tables = doc.findall('w:body/w:tbl', NS)
+        expected_rows = [row for _, _, _, rows in group_cases for row in rows]
+        assert len(tables) == len(expected_rows)
+        extent = './/{http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing}extent'
+        section = doc.find('w:body/w:sectPr', NS)
+        page = section.find('w:pgSz', NS)
+        margins = section.find('w:pgMar', NS)
+        width = (int(page.get(f'{{{W}}}w')) - sum(int(margins.get(f'{{{W}}}{side}')) for side in ('left','right'))) / 20
+        for table, fractions in zip(tables, expected_rows):
+            cols = [int(c.get(f'{{{W}}}w')) for c in table.findall('w:tblGrid/w:gridCol',NS)]
+            cells = table.findall('w:tr/w:tc',NS)
+            assert len(cols) == len(cells) == len(fractions)
+            for col, cell, fraction in zip(cols, cells, fractions):
+                assert abs(col / sum(cols) - fraction) < .001
+                picture, = cell.findall(extent)
+                points = int(picture.get('cx')) / 12700
+                assert .94 * width * fraction < points <= width * fraction
+                assert cell.find('.//w:pStyle[@w:val="PanelFigure"]',NS) is not None
+    print('Panels: both width ratios, mixed rows, thirds and unlabelled images passed')

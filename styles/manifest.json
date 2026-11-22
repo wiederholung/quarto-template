@@ -3,9 +3,9 @@
   "status": "clean source commits",
   "word": {
     "repository": "https://github.com/wiederholung/pandoc_docx_template",
-    "base_commit": "2ea0d81c68e8c7afe00b0a1a81e16a59eee307ae",
+    "base_commit": "1c2e0eec521909876427c3acb94986318bccd6a3",
     "builder": "scripts/build_quarto_references.py",
-    "builder_sha256": "0ee3de6997e329789e7ca247adb7bec9ae73f8965f6e621fb7c974e92e66cacc",
+    "builder_sha256": "584b7a73aca2e5c7b1ce7a55e9586bac769db391ff4f2b9bb74fe5526997fa17",
     "upstream_source": {
       "version": "0.1.0-dev",
       "source_commit": "8f94b9938b24bf7aa79e2a8190ef73fa97533f37",
@@ -14,18 +14,18 @@
       "outputs": [
         {
           "file": "templates\\quarto\\reference-zh.docx",
-          "sha256": "70a8b37ee8b55dab4baa74f00c78d70bc5ce0830a218c64807acdfe683667c35"
+          "sha256": "924e057a3cf3d4d15b072b8e722e5746d2a552af62779428447a4c7fde923377"
         },
         {
           "file": "templates\\quarto\\reference-en.docx",
-          "sha256": "19a9088202c7022d383b0d0e24bf8860f885e6260d5f60b664aeac7842c74a23"
+          "sha256": "a002bc78fe5660b401953c01e078da74351a2f429bc7c70796a4ce1c01d3b0fa"
         }
       ]
     }
   },
   "authors_block": {
     "repository": "https://github.com/wiederholung/authors-block",
-    "base_commit": "7410340956e9ed52136e68614c2a47cff0e9fcf3",
+    "base_commit": "c796b52bd3da603e3582e88e56708ccce9ba5749",
     "version": "0.3.0-dev"
   },
   "csl": {
@@ -54,7 +54,7 @@
     "_extensions/wiederholung/authors-block/assets/orcid.svg": "26483c4d9c32c10f7d5a7dc895ede560696336d336dac582dc3c6a8b94500919",
     "_extensions/wiederholung/authors-block/assets/README.md": "a6f998d03a256fde526d654b9c9b3c85ab52376c331681642cd5263c642e049a",
     "_extensions/wiederholung/authors-block/authors-block.lua": "d403ddbeacfe7c1cc4e3fbfab1c8a27ad3401e2f63dc3ced6eb8588ba36ddf37",
-    "_extensions/wiederholung/authors-block/docx_author_block.lua": "a541f2f872d60af99d399ccbb2c373c67574de212c06ea6b12da7548e4b19010",
+    "_extensions/wiederholung/authors-block/docx_author_block.lua": "eca7197935858110d678274cb5c0f9f3ce8a19116e06d020fa609a019688fa5c",
     "_extensions/wiederholung/authors-block/docx_style_sizes.lua": "461f6a0d6aa9414d602f9090df92361d1a573c959a2d2516c29ac92cd0fe4ec2",
     "_extensions/wiederholung/authors-block/from_author_info_blocks.lua": "0a3799b579cb140afa3eda21fd269b2f595789da9ba44128cfc9743bfdf4a29a",
     "_extensions/wiederholung/authors-block/from_scholarly_metadata.lua": "3f19fc519487aadef4c42fec6e34b5d55d8215f5686a0ecc38421abc0009f186",
@@ -67,18 +67,19 @@
     "_extensions/wiederholung/authors-block/vendor/slaxdom.lua": "fa781c0fea307013c9c8ccc5312ca47c9ed4530eb6f7a1ef6bac1e1c853f3de4",
     "_extensions/wiederholung/authors-block/vendor/slaxml.lua": "4e736768c061407609741baea1ebbe15e6b53cab5920defea5d7ed3b3c16c35e",
     "styles/csl/ieee.csl": "b4c7619fc16c45a31e4cc3271eab94ffe83192d3b4c7fc729470a3b459448de3",
-    "styles/docx/compat.lua": "6a78a93704e08f0589d7f4e5ac1b00a099538e08f82f6b78834b585d23ed90f2",
+    "styles/docx/compat.lua": "64653181ba9afcbd71e1b30277b525f66dc683d617562db1571a2da161dfc415",
     "styles/docx/document.xml": "2294d58170fe8af860d0cfc1e616f3a791bb003ecca940a7fdeeedb7aa4a03aa",
     "styles/docx/front-matter.lua": "af8a9a03be8e353d1f0f17a1975d2786d8fd1c9a1bf350a600dbb5a78e153fbe",
     "styles/docx/layout.lua": "70475aa303b4bb56c1447cd9524a730d48e18d09a0869d1ede394dbf7c8f9dca",
-    "styles/docx/reference-en.docx": "19a9088202c7022d383b0d0e24bf8860f885e6260d5f60b664aeac7842c74a23",
-    "styles/docx/reference-zh.docx": "70a8b37ee8b55dab4baa74f00c78d70bc5ce0830a218c64807acdfe683667c35",
+    "styles/docx/panel-cells.lua": "e7390b6523a922fd187b0babfb1a0a606264e4ac199150245601ea5ae66068de",
+    "styles/docx/reference-en.docx": "a002bc78fe5660b401953c01e078da74351a2f429bc7c70796a4ce1c01d3b0fa",
+    "styles/docx/reference-zh.docx": "924e057a3cf3d4d15b072b8e722e5746d2a552af62779428447a4c7fde923377",
     "styles/docx/research.theme": "f96766a4739137b0c5d095bf3e440adfffe3e4f5105a714152c673c8918a600d",
     "styles/html/research.css": "854ead76ce579fba4b3600f8f7eabcfd1401549c05c5cf463de669601efe2e61",
     "styles/latex/common.tex": "86960d8b18c47acd4b43158df0f01b06ce0e6496c3c28b6a478875fff00e40a5",
     "styles/latex/orcid.pdf": "95500cf451fb432d3f5a0762f404ec79ef787928fea86a4870ba6941b728b6c0",
     "styles/latex/title.tex": "4716d754ee0ccdd593a0dd5be3d11631cc03441916e39f01e5ba05339d94efd6",
     "styles/latex/zh.tex": "21caf3f3d5f8de37c4722758fe711a48af093cff4e17b49c15bd40881c524a3d",
-    "styles/README.md": "187ef3689209202e5e50cfb7c2ca8671fe6c8995e987f721dab09e78db38db2a"
+    "styles/README.md": "ba1ac869eaee1b30d4fffaa5df07907cd065bcdd639ef5c9e99211741bd2b95a"
   }
 }

@@ -83,10 +83,11 @@ local function marker(text,size,target,title)
   -- w:vertAlign="superscript". Family and color inherit the paragraph.
   local points = math.floor(size*layout.marker_size*2+.5)
   local raise = math.floor(size*layout.marker_raise*2+.5)
-  local link_style = target and '<w:color w:val="000000"/><w:u w:val="none"/>' or ''
+  local color = target and '<w:color w:val="000000"/>' or ''
+  local underline = target and '<w:u w:val="none"/>' or ''
   local run = pandoc.RawInline("openxml", string.format(
-    '<w:r><w:rPr>' .. link_style .. '<w:position w:val="%d"/><w:sz w:val="%d"/>' ..
-    '<w:szCs w:val="%d"/></w:rPr><w:t>%s</w:t></w:r>',
+    '<w:r><w:rPr>' .. color .. '<w:position w:val="%d"/><w:sz w:val="%d"/>' ..
+    '<w:szCs w:val="%d"/>' .. underline .. '</w:rPr><w:t>%s</w:t></w:r>',
     raise,points,points,xml(text)))
   return target and pandoc.Link({run},"#"..target,title or "") or run
 end

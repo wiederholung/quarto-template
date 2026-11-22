@@ -169,82 +169,122 @@ local function callout(div)
   return div
 end
 
-function Div(div)
-  if FORMAT~="docx" then return nil end
-  if div.classes:includes("docx-callout") then return callout(div) end
-  if not div.identifier:match("^fig%-") then return nil end
-  local panels={}
-  div:walk({Div=function(d)
-    if d.classes:includes("quarto-layout-cell-subref") and d.attributes["ref-parent"]==div.identifier then
-      panels[#panels+1]=d
+-- Quarto emits one table per panel row. Its Word writer can equalise the grid
+-- even when the layout cells still carry the requested percentages.
+local function panel_paragraph(block)
+  while block and block.t=="Div" and block.identifier=="" and #block.content==1
+      and block.attributes["custom-style"] do
+    block=block.content[1]
+  end
+  if block and (block.t=="Para" or block.t=="Plain") then return block end
+end
+
+local function panel_picture(picture, title, cell_inches)
+  if not picture then return end
+  local images=0
+  picture=picture:walk({Image=function(img)
+    images=images+1
+    -- A small gutter keeps the artwork off the shared cell edge.
+    local inches=tonumber((img.attributes.width or ""):match("^([%d%.]+)in$"))
+    img.attributes.width=string.format("%.4fin",.96*math.min(inches or cell_inches,cell_inches))
+    return img
+  end})
+  if images~=1 then return end
+  local content=picture.content:clone()
+  if title then
+    content:insert(pandoc.LineBreak())
+    content:extend(title.content)
+  end
+  return styled(pandoc.Para(content),"Panel Figure")
+end
+
+local function format_panel(panel, cell_inches)
+  if #panel.content==1 then
+    local only=panel_paragraph(panel.content[1])
+    local picture=panel_picture(only,nil,cell_inches)
+    if picture then panel.content={picture}; return panel end
+  end
+  panel=panel:walk({Table=function(tbl)
+    if tbl.attributes["custom-style"]=="FloatLayout" and #tbl.colspecs==1
+        and #tbl.bodies==1 and #tbl.bodies[1].body==1 and #tbl.bodies[1].body[1].cells==1 then
+      return tbl.bodies[1].body[1].cells[1].contents
     end
   end})
-  if #panels<2 then return nil end
-  local fraction=tonumber((panels[1].attributes.width or ""):match("^([%d%.]+)%%$"))
-  if not fraction then return nil end
-  local ncol=math.floor(100/fraction+0.5)
-  if ncol<2 then return nil end
-  for _,panel in ipairs(panels) do
-    if panel.attributes.width~=panels[1].attributes.width then return nil end
+  return panel:walk({Figure=function(fig)
+    -- Unlabelled subfigures remain native Pandoc Figures after Quarto.
+    if #fig.content~=1 or #fig.caption.long>1 then return end
+    local title=panel_paragraph(fig.caption.long[1])
+    if #fig.caption.long==1 and not title then return end
+    local picture=panel_picture(panel_paragraph(fig.content[1]),title,cell_inches)
+    if picture then return pandoc.Div({picture},fig.attr) end
+  end, Div=function(fig)
+    if not fig.identifier:match("^fig%-") or #fig.content~=2 then return end
+    local picture=panel_paragraph(fig.content[1])
+    local title=panel_paragraph(fig.content[2])
+    if not picture or not title then return end
+    local joined=panel_picture(picture,title,cell_inches)
+    if joined then fig.content={joined}; return fig end
+  end})
+end
+
+local function panel_row(tbl)
+  if #tbl.bodies~=1 or #tbl.bodies[1].body~=1 or #tbl.head.rows>0 or #tbl.foot.rows>0 then return end
+  local body=tbl.bodies[1]
+  local row=body.body[1]
+  local cells=row.cells
+  local fractions={}
+  local total=0
+  for i,cell in ipairs(cells) do
+    local panel=cell.contents[1]
+    if #cell.contents~=1 or panel.t~="Div" or not panel.attributes["layout-align"] then return end
+    local percent=tonumber((panel.attributes.width or ""):match("^([%d%.]+)%%$"))
+    if not percent or percent<=0 then return end
+    fractions[i]=percent/100
+    total=total+fractions[i]
   end
-  -- Quarto's frame-based DOCX panel layout can stack or clip in Word.
-  -- Equal-width panels need only one real table row, with no nested layout tables.
-  local first
-  local tail=pandoc.Blocks({})
-  for _,block in ipairs(div.content) do
-    if block.t=="Table" then first=first or block
-    elseif not (block.t=="RawBlock" and block.format=="openxml" and block.text:find("w:framePr",1,true)) then
-      tail:insert(block)
-    end
-  end
-  if not first then return nil end
-  local rows={}
-  local cells={}
-  for n,panel in ipairs(panels) do
-    panel=panel:walk({Table=function(t)
-      if t.attributes["custom-style"]=="FloatLayout" and #t.colspecs==1 and #t.bodies==1
-          and #t.bodies[1].body==1 and #t.bodies[1].body[1].cells==1 then
-        return t.bodies[1].body[1].cells[1].contents
-      end
-    end})
-    panel=panel:walk({Div=function(d)
-      if not d.identifier:match("^fig%-") then return nil end
-      local paragraphs={}
-      d:walk({Para=function(p) paragraphs[#paragraphs+1]=p end})
-      if #paragraphs~=2 then return nil end
-      local images=0
-      paragraphs[1]:walk({Image=function() images=images+1 end})
-      if images~=1 then return nil end
-      -- Word can split a table cell between separate image/caption paragraphs,
-      -- even with keepNext. One keepLines paragraph preserves their association.
-      local content=pandoc.Inlines({})
-      content:extend(paragraphs[1].content)
-      content:insert(pandoc.LineBreak())
-      content:extend(paragraphs[2].content)
-      content=content:walk({Image=function(img)
-        local width=tonumber((img.attributes.width or ""):match("^([%d%.]+)in$"))
-        if width then img.attributes.width=string.format("%.4fin",width*.96) end
-        return img
-      end})
-      d.content=pandoc.Blocks({styled(pandoc.Para(content),"Panel Figure")})
-      return d
-    end})
-    cells[#cells+1]=pandoc.Cell({panel},pandoc.AlignDefault)
-    if #cells==ncol or n==#panels then
-      while #cells<ncol do cells[#cells+1]=pandoc.Cell({}) end
-      rows[#rows+1]=pandoc.Row(cells); cells={}
-    end
-  end
-  local body=first.bodies[1]
-  body.body=rows
-  first.bodies={body}
   local specs={}
-  for _=1,ncol do specs[#specs+1]={pandoc.AlignDefault,1/ncol} end
-  first.colspecs=specs
-  first.attributes["custom-style"]="FloatLayout"
-  tail=tail:walk({Para=function(p) return caption(p,"fig") end})
-  div.content=pandoc.Blocks({first})
-  div.content:extend(tail)
+  -- Quarto rounds each percentage to one decimal place (e.g. 3 × 33.3%).
+  local full_row=total >= 1 - #cells*.0005 - 1e-9
+  for i,cell in ipairs(cells) do
+    local fraction=fractions[i]/(full_row and total or 1)
+    specs[i]={pandoc.AlignDefault,fraction}
+    cell.alignment=pandoc.AlignDefault
+    cell.contents={format_panel(cell.contents[1],text_width()*fraction/1440)}
+  end
+  -- Preserve an unoccupied end column in a partially filled fixed-column row.
+  if not full_row then
+    cells:insert(pandoc.Cell({}))
+    specs[#specs+1]={pandoc.AlignDefault,1-total}
+  end
+  row.cells=cells
+  body.body={row}
+  tbl.bodies={body}
+  tbl.colspecs=specs
+  tbl.attributes["custom-style"]="FloatLayout"
+  return tbl
+end
+
+function Div(div)
+  if FORMAT~="docx" then return end
+  if div.classes:includes("docx-callout") then return callout(div) end
+  if div.identifier~="" and not div.identifier:match("^fig%-") then return end
+  local changed=false
+  for i,block in ipairs(div.content) do
+    if block.t=="Table" then
+      local row=panel_row(block)
+      if row then div.content[i]=row; changed=true end
+    end
+  end
+  if not changed then return end
+  for i,block in ipairs(div.content) do
+    if block.t=="RawBlock" and block.format=="openxml" and block.text:find("w:framePr",1,true) then
+      -- A normal paragraph keeps Word from merging rows with different grids.
+      div.content[i]=pandoc.RawBlock("openxml",
+        '<w:p><w:pPr><w:pStyle w:val="FloatSeparator"/></w:pPr></w:p>')
+    elseif block.t=="Para" then
+      div.content[i]=caption(block,"fig") or block
+    end
+  end
   return div
 end
 

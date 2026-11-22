@@ -22,6 +22,8 @@ format:
     filters:
       - authors-block
       - quarto
+      - path: styles/docx/panel-cells.lua
+        at: pre-render
       - styles/docx/compat.lua
   pdf:
     filters:
