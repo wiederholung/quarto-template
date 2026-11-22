@@ -1,7 +1,6 @@
 project:
   type: default
   output-dir: output
-
 number-sections: true
 link-citations: true
 csl: styles/csl/ieee.csl
@@ -15,6 +14,7 @@ format:
   docx:
     # Printable width of the A4 reference documents, in inches.
     page-width: 5.75
+    syntax-highlighting: arrow
     template: styles/docx/document.xml
     authors-block:
       docx:
