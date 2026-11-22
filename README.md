@@ -76,6 +76,10 @@ dotnet run --file tests/validate-docx.cs -- styles/docx/reference-zh.docx styles
 
 ## 维护
 
+在模板仓库运行 `python scripts/update-csl.py` 检查 Zotero 的五种 CSL。脚本核对本地 SHA-256，并对有更新的样式用 Quarto 自带的 Pandoc 排版同一组多篇引用、DOI 期刊文献和网页文献，显示新旧结果的差异。运行 `python scripts/update-csl.py --apply` 会在全部检查通过后写入样式和清单。本地样式有未登记的改动时，先审阅这些改动。
+
+GitHub Actions 每月 1 日 02:17 UTC 检查一次，也可在 **Check Zotero CSL styles** 中手动运行。有更新时工作流创建或刷新同一个 PR，附上样例对照，由维护者审阅合并。写作项目继续使用创建时的本地 CSL 快照。
+
 `scripts/init-project.ps1 -ProjectPath <新项目目录>` 是可选的 Git 配置辅助工具，不参与渲染，也不随模板复制；它只创建缺少的点文件，不覆盖已有配置。
 
 `scripts/build-example-figures.py` 仅重建演示图片，需要 Pillow；渲染示例无需执行它。`scripts/sync-styles.py` 将已检查的相邻来源仓库更新为本地快照。正式更新应先提交当前项目，明确选择版本，再检查六种输出。手工发布供 `quarto use template` 安装的 ZIP 时，将 `_quarto.yml` 与 `.quartoignore` 放在归档根目录。

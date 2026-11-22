@@ -1,7 +1,8 @@
 # 样式与版本
 
 - `docx/`：中英文 Word 参考文档和必要的 Quarto 兼容代码。
-- `csl/`：本地 IEEE CSL，保留原文件作者和 CC BY-SA 3.0 声明。
+- `csl/` 保存 [Zotero 样式库](https://www.zotero.org/styles)的本地快照。默认使用 IEEE，可将 `csl` 改为同目录下的其他文件，如 `styles/csl/apa.csl`。各样式的下载地址和 SHA-256 见 `manifest.json`。
+- ACM Computing Surveys 稿件可选用 ACM 通用样式 `styles/csl/association-for-computing-machinery.csl`。
 - `latex/`：保留旧 PDF 共享宏、作者标题块及素材，当前原生基线不加载这些覆盖。中文 ctexart、英文 scrartcl 在单篇文档中选择。
 - `html/`：保留旧屏幕阅读样式，当前不加载；两份 QMD 各自指定 `litera` 主题。
 - `manifest.json` 记录来源仓库的提交号、同步时的工作区状态和各文件的 SHA-256。

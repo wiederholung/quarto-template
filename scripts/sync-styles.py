@@ -47,7 +47,11 @@ def commit(path):
     return subprocess.check_output(["git","-C",str(path),"rev-parse","HEAD"],text=True).strip()
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 paths=sorted(list((ROOT/"styles").rglob("*"))+list(extension.rglob("*")))
-hashes={p.relative_to(ROOT).as_posix():sha(p) for p in paths if p.is_file() and p.name!="manifest.json"}
+previous_manifest=json.loads((ROOT/"styles/manifest.json").read_bytes())
+hashes={p.relative_to(ROOT).as_posix():sha(p) for p in paths if p.is_file() and p.name!="manifest.json"
+        and ROOT/"styles/csl" not in p.parents}
+# CSL provenance and checksums are maintained together by update-csl.py.
+hashes.update({p:h for p,h in previous_manifest["sha256"].items() if p.startswith("styles/csl/")})
 manifest={
     "snapshot_version":"0.1.0-dev",
     "status":"working-tree snapshot" if any(
@@ -62,10 +66,9 @@ manifest={
         "upstream_source":json.loads((args.word_repo/"templates/quarto/manifest.json").read_text(encoding="utf-8"))},
     "authors_block":{"repository":"https://github.com/wiederholung/authors-block",
                      "base_commit":commit(args.authors_repo),"version":"0.3.0-dev"},
-    "csl":{"repository":"https://github.com/citation-style-language/styles",
-           "commit":"1ccf4696be22ea0b55f83cc9163bde3061fddb0a","path":"ieee.csl"},
+    "csl":previous_manifest["csl"],
     "verified_environment":{"quarto":"1.11.9","pandoc":"3.10","pdf_engine":"XeLaTeX / MiKTeX",
                             "word_fonts":["Times New Roman","SimSun","SimHei","Consolas"]},
-    "sha256":hashes}
+    "sha256":dict(sorted(hashes.items()))}
 (ROOT/"styles/manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 print(f"Snapshotted {len(hashes)} style/extension files. No remote updates performed.")

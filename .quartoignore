@@ -11,6 +11,7 @@ output/
 *.log
 
 # Repository maintenance is not part of a new writing project.
+.github/
 tests/
 scripts/
 docs/验证记录.md

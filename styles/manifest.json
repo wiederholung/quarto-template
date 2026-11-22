@@ -29,9 +29,13 @@
     "version": "0.3.0-dev"
   },
   "csl": {
-    "repository": "https://github.com/citation-style-language/styles",
-    "commit": "1ccf4696be22ea0b55f83cc9163bde3061fddb0a",
-    "path": "ieee.csl"
+    "urls": {
+      "apa.csl": "https://www.zotero.org/styles/apa",
+      "association-for-computing-machinery.csl": "https://www.zotero.org/styles/association-for-computing-machinery",
+      "elsevier-harvard.csl": "https://www.zotero.org/styles/elsevier-harvard",
+      "ieee.csl": "https://www.zotero.org/styles/ieee",
+      "nature.csl": "https://www.zotero.org/styles/nature"
+    }
   },
   "verified_environment": {
     "quarto": "1.11.9",
@@ -45,14 +49,15 @@
     ]
   },
   "sha256": {
+    "_extensions/wiederholung/authors-block/LICENSE.md": "7b9bd57e616652c41977bb38fa76e83c353800858a80407a59d9ff5c9ad2c4cd",
     "_extensions/wiederholung/authors-block/_extension.yml": "1adebe54020dfab403c6bc64983dd332c8f650217999a0181aad8c269636a0e0",
+    "_extensions/wiederholung/authors-block/assets/README.md": "a6f998d03a256fde526d654b9c9b3c85ab52376c331681642cd5263c642e049a",
     "_extensions/wiederholung/authors-block/assets/envelope.pdf": "e3e864a8af4d13a561188e7bb06f4d15d60b733e9d8688ce53f0d65868d8599d",
     "_extensions/wiederholung/authors-block/assets/envelope.png": "30b412071390c08ee3f7b5001da14a5a07e59443a374a04e7221e38a94ec810c",
     "_extensions/wiederholung/authors-block/assets/envelope.svg": "92fb3ac9bc5f9c2b0764b2700a77adb2cd7e6edb75487e9f777e652644658563",
     "_extensions/wiederholung/authors-block/assets/orcid.pdf": "95500cf451fb432d3f5a0762f404ec79ef787928fea86a4870ba6941b728b6c0",
     "_extensions/wiederholung/authors-block/assets/orcid.png": "3650e0422b03aba686a50ad9d18b01833964d666d6a757a53bf4095b8d067816",
     "_extensions/wiederholung/authors-block/assets/orcid.svg": "26483c4d9c32c10f7d5a7dc895ede560696336d336dac582dc3c6a8b94500919",
-    "_extensions/wiederholung/authors-block/assets/README.md": "a6f998d03a256fde526d654b9c9b3c85ab52376c331681642cd5263c642e049a",
     "_extensions/wiederholung/authors-block/authors-block.lua": "d403ddbeacfe7c1cc4e3fbfab1c8a27ad3401e2f63dc3ced6eb8588ba36ddf37",
     "_extensions/wiederholung/authors-block/docx_author_block.lua": "eca7197935858110d678274cb5c0f9f3ce8a19116e06d020fa609a019688fa5c",
     "_extensions/wiederholung/authors-block/docx_style_sizes.lua": "461f6a0d6aa9414d602f9090df92361d1a573c959a2d2516c29ac92cd0fe4ec2",
@@ -60,13 +65,17 @@
     "_extensions/wiederholung/authors-block/from_scholarly_metadata.lua": "3f19fc519487aadef4c42fec6e34b5d55d8215f5686a0ecc38421abc0009f186",
     "_extensions/wiederholung/authors-block/latex-author-block.tex": "b00609a425c51d910599f36bef43ba252172bcb699a8bc8d63e6ee1d85e62a71",
     "_extensions/wiederholung/authors-block/latex_author_block.lua": "874ac7f4a3c303ce5aa9106fc714f0877d013ae89f3cb24ab646b9e568e94c16",
-    "_extensions/wiederholung/authors-block/LICENSE.md": "7b9bd57e616652c41977bb38fa76e83c353800858a80407a59d9ff5c9ad2c4cd",
     "_extensions/wiederholung/authors-block/orcid.lua": "7ca6644b363c97b98b2112e70673384e9a0e87cb74636807e3139b715fb91f5a",
     "_extensions/wiederholung/authors-block/utils.lua": "ed498870ac195673a9edbc030ccaf80106694a3fd517c69c88bd754e387160ce",
     "_extensions/wiederholung/authors-block/vendor/LICENSE.txt": "21b7b0c90e51ff9111744b02e734f37b4e093ae55ebf5eb1f8abbf380bf3803d",
     "_extensions/wiederholung/authors-block/vendor/slaxdom.lua": "fa781c0fea307013c9c8ccc5312ca47c9ed4530eb6f7a1ef6bac1e1c853f3de4",
     "_extensions/wiederholung/authors-block/vendor/slaxml.lua": "4e736768c061407609741baea1ebbe15e6b53cab5920defea5d7ed3b3c16c35e",
-    "styles/csl/ieee.csl": "b4c7619fc16c45a31e4cc3271eab94ffe83192d3b4c7fc729470a3b459448de3",
+    "styles/README.md": "111bd3cc9809891dc9e67cc4336e5e74c9d32e25a5401f1cccb8897413e3c52d",
+    "styles/csl/apa.csl": "d9554546338c8f54f02706c4464a18bbce8e53c50cc28ff571e5713d5682adaa",
+    "styles/csl/association-for-computing-machinery.csl": "ca6e62253fde5dd0c3b1a5f772ab214f7fdebf8422d650b4e516aeede5f498b3",
+    "styles/csl/elsevier-harvard.csl": "ef1a2d368f954586cb0efde1aa672745e4703ed13d957d93640020f30d0279c5",
+    "styles/csl/ieee.csl": "a7d41be2d57452c78930b4b0032763c04dbbdf5a6ddd54e2915f856ddaafbeee",
+    "styles/csl/nature.csl": "600d5141a92512da9b0fb33fee516fb126bc093bb2ab9ff48282a26a2f25b836",
     "styles/docx/compat.lua": "64653181ba9afcbd71e1b30277b525f66dc683d617562db1571a2da161dfc415",
     "styles/docx/document.xml": "2294d58170fe8af860d0cfc1e616f3a791bb003ecca940a7fdeeedb7aa4a03aa",
     "styles/docx/front-matter.lua": "af8a9a03be8e353d1f0f17a1975d2786d8fd1c9a1bf350a600dbb5a78e153fbe",
@@ -79,7 +88,6 @@
     "styles/latex/common.tex": "86960d8b18c47acd4b43158df0f01b06ce0e6496c3c28b6a478875fff00e40a5",
     "styles/latex/orcid.pdf": "95500cf451fb432d3f5a0762f404ec79ef787928fea86a4870ba6941b728b6c0",
     "styles/latex/title.tex": "4716d754ee0ccdd593a0dd5be3d11631cc03441916e39f01e5ba05339d94efd6",
-    "styles/latex/zh.tex": "21caf3f3d5f8de37c4722758fe711a48af093cff4e17b49c15bd40881c524a3d",
-    "styles/README.md": "ba1ac869eaee1b30d4fffaa5df07907cd065bcdd639ef5c9e99211741bd2b95a"
+    "styles/latex/zh.tex": "21caf3f3d5f8de37c4722758fe711a48af093cff4e17b49c15bd40881c524a3d"
   }
 }
