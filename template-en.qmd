@@ -34,27 +34,22 @@ date: 2026-11-15
 date-format: MMMM D, YYYY
 lang: en
 bibliography: bibliography/references.bib
-csl: styles/csl/ieee.csl
-number-sections: true
-toc: false
 abstract: |
   This document is both a starting point and a set of copyable examples for research writing in Quarto. A single source produces HTML, Word and PDF, with examples of author metadata, citations, figures, tables, equations and references. All numerical results are synthetic layout examples. Replace the demonstration authors, affiliation and email before use; the ORCID belongs to the official example record.
 format:
   html:
-    toc: true
-    toc-depth: 2
+    theme: litera
   docx:
     keywords: [research writing, cross-references, reproducible documents]
     reference-doc: styles/docx/reference-en.docx
   pdf:
     documentclass: scrartcl
     classoption: [abstract=true]
-    geometry: margin=1in
 ---
 
 # Start writing {#sec-start}
 
-Copy this file and replace the title, authors, language, date and bibliography in its YAML header. The project configuration supplies shared styles; each document selects its citation style, contents list and section numbering. The Chinese counterpart, `template-zh.qmd`, covers the same features. Replace this explanatory body with your own text.
+Copy this file and replace the title, authors, language, date and bibliography in its YAML header. The project sets the citation style, HTML table of contents and section numbering. This document selects its HTML theme, Word reference document and PDF class. The Chinese counterpart, `template-zh.qmd`, covers the same features. Replace this explanatory body with your own text.
 
 The four authors in the metadata demonstrate single, multiple and shared affiliations, optional ORCID, equal contribution and two corresponding authors. Match each author's affiliation `ref` to an institution `id`. Set `equal-contributor: true` for equal contribution, and `corresponding: true` with `email` for correspondence. Word generates numbers, † and envelopes and combines email addresses. HTML uses its native author block. PDF also displays affiliations, ORCID, equal contribution and correspondence, while inheriting the document class author font and date layout.
 
@@ -78,7 +73,7 @@ Put the document title in YAML `title`; start body headings at `#`, with `##` fo
 # References {.unnumbered}
 ```
 
-Set `toc: true` in the document when a report needs a contents list. The `.unnumbered` class keeps the references heading unnumbered while other sections retain their numbering.
+HTML includes a table of contents by default. For a Word or PDF report, set `toc: true` under the corresponding format to include one. The `.unnumbered` class keeps the references heading unnumbered while other sections retain their numbering.
 
 # Citations and cross references {#sec-references}
 

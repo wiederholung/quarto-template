@@ -18,6 +18,14 @@ THIS SOFTWARE.
 
 local List = require 'pandoc.List'
 
+-- On Windows Lua's file loader can lose Unicode characters in an absolute
+-- project path. Resolve sibling modules relative to Pandoc's working directory.
+if quarto and pandoc.system.os == 'mingw32' then
+  local directory = pandoc.path.directory(quarto.utils.resolve_path('authors-block.lua'))
+  local relative = pandoc.path.make_relative(directory, pandoc.system.get_working_directory(), true)
+  package.path = pandoc.path.join({relative, '?.lua'}) .. ';' .. package.path
+end
+
 -- [import]
 local from_utils = require "utils"
 local normalize_affiliations = from_utils.normalize_affiliations

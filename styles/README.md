@@ -3,8 +3,8 @@
 - `docx/`：中英文 Word 参考文档和必要的 Quarto 兼容代码。
 - `csl/`：本地 IEEE CSL，保留原文件作者和 CC BY-SA 3.0 声明。
 - `latex/`：保留旧 PDF 共享宏、作者标题块及素材，当前原生基线不加载这些覆盖。中文 ctexart、英文 scrartcl 在单篇文档中选择。
-- `html/`：保留旧屏幕阅读样式，当前不加载；HTML 使用 Quarto 的 `cosmo` 主题。
-- `manifest.json`：来源、基线 commit、开发版本和 SHA-256。标为工作树快照的文件包含未发布的本地修改，不能把基线 commit 当作修改后的发布版本。
+- `html/`：保留旧屏幕阅读样式，当前不加载；两份 QMD 各自指定 `litera` 主题。
+- `manifest.json` 记录来源仓库的提交号、同步时的工作区状态和各文件的 SHA-256。
 
 Word 样式由相邻 `pandoc_docx_template` 仓库中的 `scripts/build_quarto_references.py` 生成，原始普通版模板保持不变。正文中英文分别使用首行缩进与段间距；其他样式以清晰的层级、紧凑题注和三线表为主。
 

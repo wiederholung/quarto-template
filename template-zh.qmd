@@ -34,25 +34,21 @@ date: 2026-11-15
 date-format: YYYY[年]M[月]D[日]
 lang: zh-Hans
 bibliography: bibliography/references.bib
-csl: styles/csl/ieee.csl
-number-sections: true
-toc: false
 abstract: |
   本文档同时作为新项目起点和可复制的写作示例，展示同一份 Quarto 源文件如何生成 HTML、Word 与 PDF。示例覆盖作者信息、引用、图表、公式和参考文献。图表中的数值均为演示数据，不代表实验结果；作者、单位和邮箱需在正式使用前替换，ORCID 采用官方示例记录。
 format:
   html:
-    toc: true
+    theme: litera
   docx:
     keywords: [科研写作, 交叉引用, 可复现文档]
     reference-doc: styles/docx/reference-zh.docx
   pdf:
     documentclass: ctexart
-    geometry: margin=1in
 ---
 
 # 开始写作 {#sec-start}
 
-复制本文件并修改 YAML 中的标题、作者、语言、日期和文献路径，即可开始写作。公共样式位于项目配置中；单篇文档明确选择参考文献样式、目录和编号。英文项目使用 `template-en.qmd`，两份文件演示相同功能。正文可直接替换，不必保留这份说明。
+复制本文件并修改 YAML 中的标题、作者、语言、日期和文献路径，即可开始写作。项目统一设置引用样式、HTML 目录和章节编号。本文件选择 HTML 主题、Word 参考文档和 PDF 文档类。英文项目使用 `template-en.qmd`，两份文件演示相同功能。正文可直接替换，不必保留这份说明。
 
 元数据中的四位示例作者演示了单机构与多机构、共享机构、有无 ORCID、同等贡献和两位通信作者。使用 `affiliations` 中的 `id` 与作者的 `ref` 关联机构；`equal-contributor: true` 表示同等贡献，`corresponding: true` 配合 `email` 指定通信作者。Word 自动生成数字、† 和信封，并合并邮箱。HTML 使用原生作者区；PDF 作者区同样显示机构、ORCID、同等贡献和通信邮箱，字体与日期排版继承文档类。
 
@@ -76,7 +72,7 @@ Word 使用仓库内的 reference-doc。PDF 使用 Quarto 内置模板、XeLaTeX
 # 参考文献 {.unnumbered}
 ```
 
-若报告需要目录，可在本文件中设置 `toc: true`。参考文献标题使用 `.unnumbered`，与是否开启其他章节编号无关。
+HTML 默认带目录。若 Word 或 PDF 报告也需要目录，可在对应格式下设置 `toc: true`。参考文献标题使用 `.unnumbered`，与是否开启其他章节编号无关。
 
 # 引用与交叉引用 {#sec-references}
 

@@ -20,6 +20,7 @@ format:
   pdf:
     pdf-engine: xelatex
     papersize: a4
+    geometry: margin=1in
     indent: true
 ```
 
@@ -31,7 +32,6 @@ format:
 format:
   pdf:
     documentclass: ctexart
-    geometry: margin=1in
 ```
 
 英文单篇配置：
@@ -43,7 +43,7 @@ format:
     classoption: [abstract=true]
 ```
 
-中文不显式指定 `fontset`，由 CTeX 自动选择字体方案。本机 Windows 自动使用 `windows`，macOS 使用 `mac`，其他系统通常使用 `fandol`；跨系统的字体及分页可能不同。标题、作者、语言、日期、摘要、文献文件、CSL 和章节编号仍属于单篇内容配置。
+中文不显式指定 `fontset`，由 CTeX 自动选择字体方案。本机 Windows 自动使用 `windows`，macOS 使用 `mac`，其他系统通常使用 `fandol`；跨系统的字体及分页可能不同。标题、作者、语言、日期、摘要和文献文件由单篇设置，CSL 和章节编号由项目统一设置。
 
 ## 默认行为的来源
 
@@ -53,7 +53,7 @@ format:
 - 英文生成的类选项包括 `english, a4paper, abstract=true, DIV=11, numbers=noendperiod`。后两项是 Quarto 自动提供的 KOMA 配置，未在项目中重复设置。
 - 字体、标题字号及段落规则来自文档类和默认字体支持。中文正文为宋体，标题按 CTeX 使用黑体；西文、代码和数学采用 Latin Modern 系列。
 - 中文一级标题居中，普通页有文档类默认页眉；英文标题靠左、使用无衬线粗体。摘要、题注和页码均保留各自的原生处理。
-- 默认作者区使用姓名及 `\and` 排列，只显示姓名。机构、ORCID、同等贡献、通信作者与邮箱仍保存在 QMD 元数据中，当前 PDF 没有追加这些展示功能。
+- 默认作者区使用姓名及 `\and` 排列，只显示姓名。机构、ORCID、同等贡献、通信作者与邮箱仍保存在 QMD 元数据中，原生基线未展示这些字段；当前模板通过 `authors-block` 排印。
 - 中文摘要显示“摘要”标题；`scrartcl` 默认摘要不显示 Abstract 标题。当前英文单篇显式设置 `abstract=true`，显示 Abstract 标题。
 - 链接使用 Quarto 默认的蓝色。表格和题注使用内置转换；图片按默认浮动机制排列，可能与源码出现的位置不同。
 
@@ -81,7 +81,7 @@ TeX pt 为 1/72.27 英寸，PDF 的点为 1/72 英寸，因此 PDF 中的测量�
 
 撤下的配置包括统一 11 pt 字号、Termes/Heros/Consolas 字体、额外 CJK 字体指定、旧中文自定页边距与 `linestretch: 1.2`、中文标题重定义、统一题注样式、全局 `fig-pos: H`、表格缩小及预留空间、强制孤行控制、自定义链接色和作者区。默认摘要、作者与字体出现变化是建立基线的预期结果。
 
-Word 样式在本次基线工作中保持原状。HTML 已取消自定义 CSS，使用 Quarto 的 `cosmo` 主题。后续优先讨论作者与摘要所需功能，再评估图表和正文的阅读体验；每项覆盖都应有明确用途和实际渲染依据。
+Word 样式在本次基线工作中保持原状。当时的 HTML 基线使用 `cosmo`；当前两份示例均在各自 QMD 中选择 `litera`。后续优先讨论作者与摘要所需功能，再评估图表和正文的阅读体验；每项覆盖都应有明确用途和实际渲染依据。
 
 ## 重建与检查
 

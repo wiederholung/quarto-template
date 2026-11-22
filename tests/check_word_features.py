@@ -20,7 +20,7 @@ def run(args,root,env=None):
     p=subprocess.run(args,cwd=root,capture_output=True,text=True,encoding='utf8',env=env)
     if p.returncode: raise AssertionError(p.stdout+'\n'+p.stderr)
 
-with tempfile.TemporaryDirectory(prefix='quarto-word-features-') as temp:
+with tempfile.TemporaryDirectory(prefix='quarto-word-中文 features-') as temp:
     root=Path(temp)
     # Exercise a copied template with its bundled XML dependency, without imports
     # from the checkout or globally installed XML libraries.

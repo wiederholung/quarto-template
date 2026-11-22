@@ -1,5 +1,6 @@
 """Snapshot reviewed local forks. Run explicitly, never during document rendering."""
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import argparse, hashlib, json, shutil, subprocess
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -12,7 +13,22 @@ for lang in ("zh","en"):
     dest.parent.mkdir(parents=True,exist_ok=True)
     shutil.copyfile(args.word_repo/f"templates/quarto/reference-{lang}.docx",dest)
 extension=ROOT/"_extensions/wiederholung/authors-block"
-shutil.copytree(args.authors_repo/"_extensions/authors-block",extension,dirs_exist_ok=True)
+extension.parent.mkdir(parents=True, exist_ok=True)
+with TemporaryDirectory(dir=extension.parent) as temporary:
+    staged = Path(temporary) / "staged"
+    previous = Path(temporary) / "previous"
+    shutil.copytree(args.authors_repo / "_extensions/authors-block", staged)
+    for required in ("_extension.yml", "assets/orcid.pdf"):
+        if not (staged / required).is_file():
+            raise FileNotFoundError(staged / required)
+    if extension.exists():
+        extension.rename(previous)
+    try:
+        staged.rename(extension)
+    except OSError:
+        if previous.exists():
+            previous.rename(extension)
+        raise
 shutil.copyfile(extension/"assets/orcid.pdf",ROOT/"styles/latex/orcid.pdf")
 
 def commit(path):
@@ -22,7 +38,10 @@ paths=sorted(list((ROOT/"styles").rglob("*"))+list(extension.rglob("*")))
 hashes={p.relative_to(ROOT).as_posix():sha(p) for p in paths if p.is_file() and p.name!="manifest.json"}
 manifest={
     "snapshot_version":"0.1.0-dev",
-    "status":"local working-tree snapshot; unpublished",
+    "status":"working-tree snapshot" if any(
+        subprocess.check_output(["git", "-C", str(repo), "status", "--porcelain"])
+        for repo in (args.word_repo, args.authors_repo)
+    ) else "clean source commits",
     "word":{
         "repository":"https://github.com/wiederholung/pandoc_docx_template",
         "base_commit":commit(args.word_repo),

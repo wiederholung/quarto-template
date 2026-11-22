@@ -2,13 +2,15 @@ project:
   type: default
   output-dir: output
 
+number-sections: true
 link-citations: true
+csl: styles/csl/ieee.csl
 format:
   html:
-    theme: cosmo
+    toc: true
     link-external-newwindow: true
-    code-copy: true
-    embed-resources: true
+    code-copy: hover
+    embed-resources: false
     html-math-method: mathjax
   docx:
     # Printable width of the A4 reference documents, in inches.
@@ -27,6 +29,7 @@ format:
       - authors-block
     pdf-engine: xelatex
     papersize: a4
+    geometry: margin=1in
+    colorlinks: false
     # Let the document class control paragraph indentation and spacing.
     indent: true
-    colorlinks: false

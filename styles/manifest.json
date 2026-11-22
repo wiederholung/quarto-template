@@ -1,6 +1,6 @@
 {
   "snapshot_version": "0.1.0-dev",
-  "status": "local working-tree snapshot; unpublished",
+  "status": "clean source commits",
   "word": {
     "repository": "https://github.com/wiederholung/pandoc_docx_template",
     "base_commit": "2ea0d81c68e8c7afe00b0a1a81e16a59eee307ae",
@@ -25,7 +25,7 @@
   },
   "authors_block": {
     "repository": "https://github.com/wiederholung/authors-block",
-    "base_commit": "2307dd795c75d35829bf47716ec1cac221b4ab2b",
+    "base_commit": "7410340956e9ed52136e68614c2a47cff0e9fcf3",
     "version": "0.3.0-dev"
   },
   "csl": {
@@ -53,7 +53,7 @@
     "_extensions/wiederholung/authors-block/assets/orcid.png": "3650e0422b03aba686a50ad9d18b01833964d666d6a757a53bf4095b8d067816",
     "_extensions/wiederholung/authors-block/assets/orcid.svg": "26483c4d9c32c10f7d5a7dc895ede560696336d336dac582dc3c6a8b94500919",
     "_extensions/wiederholung/authors-block/assets/README.md": "a6f998d03a256fde526d654b9c9b3c85ab52376c331681642cd5263c642e049a",
-    "_extensions/wiederholung/authors-block/authors-block.lua": "e6bea625c48704c303c09fadeaadaa167437ab742b55c36356ff8da6d093e5f7",
+    "_extensions/wiederholung/authors-block/authors-block.lua": "d403ddbeacfe7c1cc4e3fbfab1c8a27ad3401e2f63dc3ced6eb8588ba36ddf37",
     "_extensions/wiederholung/authors-block/docx_author_block.lua": "a541f2f872d60af99d399ccbb2c373c67574de212c06ea6b12da7548e4b19010",
     "_extensions/wiederholung/authors-block/docx_style_sizes.lua": "461f6a0d6aa9414d602f9090df92361d1a573c959a2d2516c29ac92cd0fe4ec2",
     "_extensions/wiederholung/authors-block/from_author_info_blocks.lua": "0a3799b579cb140afa3eda21fd269b2f595789da9ba44128cfc9743bfdf4a29a",
@@ -79,6 +79,6 @@
     "styles/latex/orcid.pdf": "95500cf451fb432d3f5a0762f404ec79ef787928fea86a4870ba6941b728b6c0",
     "styles/latex/title.tex": "4716d754ee0ccdd593a0dd5be3d11631cc03441916e39f01e5ba05339d94efd6",
     "styles/latex/zh.tex": "21caf3f3d5f8de37c4722758fe711a48af093cff4e17b49c15bd40881c524a3d",
-    "styles/README.md": "d85cdbe3a1be85e608c6ec027c7b31248038b6bdd3230ef730ffada4e15f5e8a"
+    "styles/README.md": "187ef3689209202e5e50cfb7c2ca8671fe6c8995e987f721dab09e78db38db2a"
   }
 }
